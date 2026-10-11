@@ -1,30 +1,35 @@
 package com.example.weathertracker
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.example.weathertracker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        val etParameter = findViewById<EditText>(R.id.etParameter)
-        val btn1 = findViewById<Button>(R.id.btn1)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        btn1.setOnClickListener {
-            val value = etParameter.text.toString().trim()
+        binding.btn1.setOnClickListener {
+            val value = binding.etParameter.text.toString().trim()
 
             if (value.isEmpty()) {
-                etParameter.error = "Введите параметр"
+                binding.etParameter.error = "Введите параметр"
                 return@setOnClickListener
             }
 
-            val intent = Intent(this, SecondActivity::class.java)
-            intent.putExtra("PARAM_KEY", value)
-            startActivity(intent)
+            binding.tvResult.text = "Вы ищете погоду в городе: $value"
+
+        }
+
+        binding.btnClear.setOnClickListener {
+            binding.etParameter.text.clear()
+            binding.tvResult.text = "Результат появится здесь"
+            binding.etParameter.error = null
         }
     }
 }
