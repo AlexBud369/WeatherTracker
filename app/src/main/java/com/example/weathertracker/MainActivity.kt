@@ -1,5 +1,6 @@
 package com.example.weathertracker
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.weathertracker.databinding.ActivityMainBinding
@@ -30,6 +31,14 @@ class MainActivity : AppCompatActivity() {
             binding.etParameter.text.clear()
             binding.tvResult.text = "Результат появится здесь"
             binding.etParameter.error = null
+        }
+
+        binding.btnOpenLinear.setOnClickListener {
+            startActivity(Intent(this, ReviewActivityLinear::class.java))
+        }
+
+        binding.btnOpenConstraint.setOnClickListener {
+            startActivity(Intent(this, ReviewActivityConstraint::class.java))
         }
     }
 }

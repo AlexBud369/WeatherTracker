@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- ФИКСИРОВАННЫЙ заголовок -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Оставить отзыв"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="12dp" />
+
+    <!-- ПРОКРУЧИВАЕМАЯ форма: weight=1 + height=0dp = весь остаток -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Совпало / Не совпало -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <Button
+                    android:id="@+id/btn_match"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Совпало"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/btn_mismatch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Не совпало"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+            <!-- Заголовок отзыва -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Заголовок отзыва"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/et_review_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Введите заголовок"
+                android:inputType="text"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Город -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Город"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp" />
+
+            <AutoCompleteTextView
+                android:id="@+id/ac_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Начните вводить город"
+                android:inputType="text"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Дата -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Дата"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp" />
+
+            <Button
+                android:id="@+id/btn_pick_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Выбрать дату"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Время -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Время"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp" />
+
+            <Button
+                android:id="@+id/btn_pick_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Выбрать время"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Комментарий -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Комментарий"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/et_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minLines="3"
+                android:gravity="top"
+                android:hint="Опишите, насколько прогноз совпал с реальностью"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ФИКСИРОВАННЫЕ Сохранить / Отменить -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Отменить"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Сохранить"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- ФИКСИРОВАННАЯ нижняя навигация -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#EEEEEE"
+        android:layout_marginTop="8dp">
+
+        <Button android:id="@+id/nav_weather"
+            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:text="Погода"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button android:id="@+id/nav_forecast"
+            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:text="Прогноз"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button android:id="@+id/nav_reviews"
+            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:text="Отзывы"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button android:id="@+id/nav_settings"
+            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:text="Настройки"
+            style="?android:attr/borderlessButtonStyle" />
+    </LinearLayout>
+
+</LinearLayout>
