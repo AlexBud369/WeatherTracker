@@ -3,33 +3,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center">
+    android:padding="16dp">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Лабораторная работа 7"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="32dp" />
-
-    <Button
-        android:id="@+id/btnTask1"
+        android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Задание 1: список городов" />
+        android:text="Погода"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btnTask2"
+    <EditText
+        android:id="@+id/etCity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Задание 2: список отзывов" />
+        android:hint="Введите город"
+        android:layout_marginTop="16dp" />
 
     <Button
-        android:id="@+id/btnTask3"
+        android:id="@+id/btnShowWeather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Задание 3: сетка отзывов" />
+        android:text="Показать погоду"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/tvWeatherOutput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Результат появится здесь"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/tvCreateCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginTop="24dp" />
 
 </LinearLayout>
