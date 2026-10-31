@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherTracker">
 
-        <!-- Экран 1: Главный экран погоды -->
+        <!-- Единственная хост-Activity (Single-Activity Architecture, Лабораторная работа №9) -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -25,42 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Экран 2: Подробнее о погоде (прогноз) -->
-        <activity
-            android:name=".WeatherDetailActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Экран 3: Мои отзывы -->
-        <activity
-            android:name=".ReviewsActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Экран 4: Оставить отзыв -->
-        <activity
-            android:name=".AddReviewActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Экран 5: Просмотр отзыва -->
-        <activity
-            android:name=".ViewReviewActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Экран 6: Настройки -->
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Интерактивная карта (увеличение карты с главного экрана) -->
-        <activity
-            android:name=".MapActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
 
     </application>
 

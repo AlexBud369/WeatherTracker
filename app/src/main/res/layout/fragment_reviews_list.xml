@@ -157,7 +157,4 @@
             style="@style/Widget.MaterialComponents.Button.TextButton" />
     </LinearLayout>
 
-    <!-- Нижняя навигация -->
-    <include layout="@layout/layout_bottom_nav" />
-
 </LinearLayout>

@@ -2,18 +2,29 @@ package com.example.weathertracker
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 
-class WeatherDetailActivity : AppCompatActivity() {
+class ForecastFragment : Fragment() {
 
     companion object {
-        const val EXTRA_CITY = "extra_city"
+        private const val ARG_CITY = "arg_city"
+
+        fun newInstance(city: String = "Москва"): ForecastFragment {
+            val fragment = ForecastFragment()
+            val args = Bundle().apply {
+                putString(ARG_CITY, city)
+            }
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     private lateinit var tvHeaderCity: TextView
@@ -25,24 +36,31 @@ class WeatherDetailActivity : AppCompatActivity() {
 
     private var currentCity: String = "Москва"
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_weather_detail)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_forecast, container, false)
+    }
 
-        tvHeaderCity = findViewById(R.id.tvHeaderCity)
-        etDetailCitySearch = findViewById(R.id.etDetailCitySearch)
-        btnDetailSearch = findViewById(R.id.btnDetailSearch)
-        layoutHourlyContainer = findViewById(R.id.layoutHourlyContainer)
-        layoutWeeklyContainer = findViewById(R.id.layoutWeeklyContainer)
-        btnBack = findViewById(R.id.btnBack)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // Получаем переданный город из Intent
-        currentCity = intent.getStringExtra(EXTRA_CITY)?.takeIf { it.isNotBlank() } ?: "Москва"
+        tvHeaderCity = view.findViewById(R.id.tvHeaderCity)
+        etDetailCitySearch = view.findViewById(R.id.etDetailCitySearch)
+        btnDetailSearch = view.findViewById(R.id.btnDetailSearch)
+        layoutHourlyContainer = view.findViewById(R.id.layoutHourlyContainer)
+        layoutWeeklyContainer = view.findViewById(R.id.layoutWeeklyContainer)
+        btnBack = view.findViewById(R.id.btnBack)
+
+        // Получение переданного аргумента из Bundle (Шаг 5 Лаб 9)
+        currentCity = arguments?.getString(ARG_CITY)?.takeIf { it.isNotBlank() } ?: "Москва"
         updateCityView(currentCity)
 
+        // Возврат назад по стеку фрагментов (BackStack, Шаг 4 Лаб 9)
         btnBack.setOnClickListener {
-            // Двунаправленная навигация - возврат назад
-            finish()
+            parentFragmentManager.popBackStack()
         }
 
         btnDetailSearch.setOnClickListener {
@@ -50,16 +68,14 @@ class WeatherDetailActivity : AppCompatActivity() {
             if (searchedCity.isNotEmpty()) {
                 currentCity = searchedCity
                 updateCityView(currentCity)
-                Toast.makeText(this, "Загружен прогноз для: $currentCity", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Загружен прогноз для: $currentCity", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Введите название города", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Введите название города", Toast.LENGTH_SHORT).show()
             }
         }
 
         populateHourlyForecast()
         populateWeeklyForecast()
-
-        NavigationHelper.setupBottomNav(this, NavigationHelper.TAB_FORECAST)
     }
 
     private fun updateCityView(cityName: String) {
@@ -69,7 +85,7 @@ class WeatherDetailActivity : AppCompatActivity() {
 
     private fun populateHourlyForecast() {
         layoutHourlyContainer.removeAllViews()
-        val inflater = LayoutInflater.from(this)
+        val inflater = LayoutInflater.from(requireContext())
 
         val hourlyList = listOf(
             Triple("10:00", "☀️", "+18°"),
@@ -96,7 +112,7 @@ class WeatherDetailActivity : AppCompatActivity() {
 
     private fun populateWeeklyForecast() {
         layoutWeeklyContainer.removeAllViews()
-        val inflater = LayoutInflater.from(this)
+        val inflater = LayoutInflater.from(requireContext())
 
         data class DayForecast(
             val date: String,

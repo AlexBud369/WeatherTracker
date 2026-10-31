@@ -43,7 +43,7 @@
         android:layout_weight="1"
         android:background="@drawable/bg_map_placeholder">
 
-        <!-- Слой радара и сетки -->
+        <!-- Слой радара и метка города -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
