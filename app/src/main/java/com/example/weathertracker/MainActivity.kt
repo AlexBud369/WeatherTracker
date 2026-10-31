@@ -32,6 +32,16 @@ class MainActivity : AppCompatActivity() {
 
     private var currentCity: String = "Москва"
 
+    private val hideNoticeRunnable = Runnable {
+        tvLatestReviewNotice.animate()
+            .alpha(0f)
+            .setDuration(400)
+            .withEndAction {
+                tvLatestReviewNotice.visibility = View.GONE
+                tvLatestReviewNotice.alpha = 1f
+            }
+    }
+
     // Регистрация ActivityResultLauncher для получения возвращаемых данных (Лаб 8, Шаг 4)
     private val addReviewLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -42,8 +52,18 @@ class MainActivity : AppCompatActivity() {
             val city = data?.getStringExtra(AddReviewActivity.EXTRA_CITY) ?: currentCity
             val status = data?.getStringExtra(AddReviewActivity.EXTRA_STATUS) ?: "Совпало"
 
-            tvLatestReviewNotice.visibility = View.VISIBLE
-            tvLatestReviewNotice.text = "✓ Добавлен отзыв: «$title» для города $city ($status)"
+            tvLatestReviewNotice.apply {
+                removeCallbacks(hideNoticeRunnable)
+                alpha = 1f
+                visibility = View.VISIBLE
+                text = "✓ Добавлен отзыв: «$title» для города $city ($status)  ✕"
+                setOnClickListener {
+                    removeCallbacks(hideNoticeRunnable)
+                    visibility = View.GONE
+                }
+                postDelayed(hideNoticeRunnable, 4000)
+            }
+
             Toast.makeText(
                 this,
                 "Результат успешно получен из дочерней Activity: «$title»",
@@ -117,6 +137,11 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         NavigationHelper.setupBottomNav(this, NavigationHelper.TAB_WEATHER)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tvLatestReviewNotice.removeCallbacks(hideNoticeRunnable)
     }
 
     private fun updateWeatherDisplay(city: String) {
