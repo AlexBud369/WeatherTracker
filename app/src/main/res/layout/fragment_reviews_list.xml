@@ -34,50 +34,53 @@
             android:backgroundTint="#1E88E5" />
     </LinearLayout>
 
-    <!-- Панель: Сортировка, Фильтрация, Сброс -->
+    <!-- Панель: Сортировка, Фильтрация, Сброс (в два ряда для идеального размещения текста) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="6dp"
         android:background="#FFFFFF"
         android:elevation="1dp">
 
-        <Button
-            android:id="@+id/btnSort"
-            android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="4dp"
-            android:text="Сортировка"
-            android:textSize="11sp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            app:icon="@drawable/ic_sort"
-            app:iconSize="14dp"
-            app:iconGravity="textStart" />
+        <!-- Ряд 1: Кнопки Сортировать и Фильтровать (без иконок, текст полностью помещается) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnFilter"
-            android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="4dp"
-            android:text="Фильтр"
-            android:textSize="11sp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            app:icon="@drawable/ic_filter"
-            app:iconSize="14dp"
-            app:iconGravity="textStart" />
+            <Button
+                android:id="@+id/btnSort"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="Сортировать"
+                android:textSize="13sp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
+            <Button
+                android:id="@+id/btnFilter"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="Фильтровать"
+                android:textSize="13sp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+        </LinearLayout>
+
+        <!-- Ряд 2: Кнопка Сбросить фильтры -->
         <Button
             android:id="@+id/btnReset"
-            android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:text="Сброс"
-            android:textSize="11sp"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginTop="4dp"
+            android:text="Сбросить фильтры"
+            android:textSize="12sp"
+            android:textColor="#64748B"
             style="@style/Widget.MaterialComponents.Button.TextButton" />
     </LinearLayout>
 
@@ -118,7 +121,7 @@
             android:visibility="gone" />
     </FrameLayout>
 
-    <!-- Пагинация -->
+    <!-- Пагинация (без лишних стрелочек/иконок) -->
     <LinearLayout
         android:id="@+id/layoutPagination"
         android:layout_width="match_parent"
@@ -132,9 +135,9 @@
         <Button
             android:id="@+id/btnPrevPage"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:text="‹ Назад"
-            android:textSize="11sp"
+            android:layout_height="36dp"
+            android:text="Назад"
+            android:textSize="12sp"
             style="@style/Widget.MaterialComponents.Button.TextButton" />
 
         <TextView
@@ -151,9 +154,9 @@
         <Button
             android:id="@+id/btnNextPage"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:text="Вперед ›"
-            android:textSize="11sp"
+            android:layout_height="36dp"
+            android:text="Вперед"
+            android:textSize="12sp"
             style="@style/Widget.MaterialComponents.Button.TextButton" />
     </LinearLayout>
 

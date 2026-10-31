@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 
         val targetFragment: Fragment = when (tab) {
             NavigationHelper.TAB_WEATHER -> WeatherMainFragment.newInstance()
-            NavigationHelper.TAB_FORECAST -> ForecastFragment.newInstance()
+            NavigationHelper.TAB_FORECAST -> ForecastFragment.newInstance(WeatherAppState.currentCity)
             NavigationHelper.TAB_REVIEWS -> ReviewsListFragment.newInstance()
             NavigationHelper.TAB_SETTINGS -> SettingsFragment.newInstance()
             else -> WeatherMainFragment.newInstance()

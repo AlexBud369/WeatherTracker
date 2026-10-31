@@ -3,6 +3,7 @@ package com.example.weathertracker
 object ReviewRepository {
     private val reviews = mutableListOf(
         Review(
+            id = 1L,
             city = "Москва",
             date = "30.10.2026 10:45",
             status = "Совпало",
@@ -10,6 +11,7 @@ object ReviewRepository {
             title = "Точный прогноз на выходные"
         ),
         Review(
+            id = 2L,
             city = "Санкт-Петербург",
             date = "29.10.2026 15:30",
             status = "Не совпало",
@@ -17,6 +19,7 @@ object ReviewRepository {
             title = "Неожиданный дождь"
         ),
         Review(
+            id = 3L,
             city = "Казань",
             date = "28.10.2026 18:00",
             status = "Совпало",
@@ -24,6 +27,7 @@ object ReviewRepository {
             title = "Ветрено в Казани"
         ),
         Review(
+            id = 4L,
             city = "Новосибирск",
             date = "27.10.2026 08:00",
             status = "Совпало",
@@ -39,7 +43,10 @@ object ReviewRepository {
     }
 
     fun removeReview(review: Review) {
-        reviews.removeAll { it.id == review.id || (it.city == review.city && it.date == review.date && it.comment == review.comment) }
+        val index = reviews.indexOfFirst { it.id == review.id }
+        if (index != -1) {
+            reviews.removeAt(index)
+        }
     }
 
     fun updateReview(updatedReview: Review) {

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -16,7 +15,7 @@ class MapFragment : Fragment() {
     companion object {
         private const val ARG_CITY = "arg_city"
 
-        fun newInstance(city: String = "Москва"): MapFragment {
+        fun newInstance(city: String = WeatherAppState.currentCity): MapFragment {
             val fragment = MapFragment()
             val args = Bundle().apply {
                 putString(ARG_CITY, city)
@@ -34,6 +33,7 @@ class MapFragment : Fragment() {
     private lateinit var btnZoomOut: FloatingActionButton
 
     private var zoomLevel: Int = 10
+    private var currentCity: String = WeatherAppState.currentCity
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,9 +53,9 @@ class MapFragment : Fragment() {
         btnZoomIn = view.findViewById(R.id.btnZoomIn)
         btnZoomOut = view.findViewById(R.id.btnZoomOut)
 
-        val city = arguments?.getString(ARG_CITY)?.takeIf { it.isNotBlank() } ?: "Москва"
-        tvMapHeader.text = "Интерактивная карта: $city"
-        tvMapPinCity.text = "$city: +18°C, Радар осадков"
+        currentCity = arguments?.getString(ARG_CITY)?.takeIf { it.isNotBlank() } ?: WeatherAppState.currentCity
+        tvMapHeader.text = "Интерактивная карта: $currentCity"
+        updatePinText()
 
         btnBackFromMap.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -68,15 +68,19 @@ class MapFragment : Fragment() {
         btnZoomIn.setOnClickListener {
             if (zoomLevel < 18) {
                 zoomLevel++
-                Toast.makeText(requireContext(), "Масштаб: $zoomLevel (приближение)", Toast.LENGTH_SHORT).show()
+                updatePinText()
             }
         }
 
         btnZoomOut.setOnClickListener {
             if (zoomLevel > 3) {
                 zoomLevel--
-                Toast.makeText(requireContext(), "Масштаб: $zoomLevel (отдаление)", Toast.LENGTH_SHORT).show()
+                updatePinText()
             }
         }
+    }
+
+    private fun updatePinText() {
+        tvMapPinCity.text = "$currentCity: +18°C, Масштаб ${zoomLevel}x"
     }
 }

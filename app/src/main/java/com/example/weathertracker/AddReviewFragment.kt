@@ -25,7 +25,7 @@ class AddReviewFragment : Fragment() {
         private const val ARG_CITY = "arg_city"
         private const val ARG_REVIEW = "arg_review"
 
-        fun newInstance(city: String? = null, review: Review? = null): AddReviewFragment {
+        fun newInstance(city: String? = WeatherAppState.currentCity, review: Review? = null): AddReviewFragment {
             val fragment = AddReviewFragment()
             val args = Bundle().apply {
                 city?.let { putString(ARG_CITY, it) }
@@ -110,8 +110,9 @@ class AddReviewFragment : Fragment() {
                 selectedTime = parts[1]
                 btnPickTime.text = "⏰ $selectedTime"
             }
-        } else if (!initialCity.isNullOrBlank()) {
-            actvCity.setText(initialCity)
+        } else {
+            val cityToUse = if (!initialCity.isNullOrBlank()) initialCity else WeatherAppState.currentCity
+            actvCity.setText(cityToUse)
         }
 
         // Выбор даты через DatePickerDialog

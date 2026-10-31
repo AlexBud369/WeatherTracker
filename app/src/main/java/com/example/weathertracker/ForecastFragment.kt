@@ -1,15 +1,18 @@
 package com.example.weathertracker
 
+import android.content.Context
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 
 class ForecastFragment : Fragment() {
@@ -17,7 +20,7 @@ class ForecastFragment : Fragment() {
     companion object {
         private const val ARG_CITY = "arg_city"
 
-        fun newInstance(city: String = "Москва"): ForecastFragment {
+        fun newInstance(city: String = WeatherAppState.currentCity): ForecastFragment {
             val fragment = ForecastFragment()
             val args = Bundle().apply {
                 putString(ARG_CITY, city)
@@ -33,8 +36,6 @@ class ForecastFragment : Fragment() {
     private lateinit var layoutHourlyContainer: LinearLayout
     private lateinit var layoutWeeklyContainer: LinearLayout
     private lateinit var btnBack: ImageButton
-
-    private var currentCity: String = "Москва"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,9 +55,11 @@ class ForecastFragment : Fragment() {
         layoutWeeklyContainer = view.findViewById(R.id.layoutWeeklyContainer)
         btnBack = view.findViewById(R.id.btnBack)
 
-        // Получение переданного аргумента из Bundle (Шаг 5 Лаб 9)
-        currentCity = arguments?.getString(ARG_CITY)?.takeIf { it.isNotBlank() } ?: "Москва"
-        updateCityView(currentCity)
+        val passedCity = arguments?.getString(ARG_CITY)?.takeIf { it.isNotBlank() }
+        if (passedCity != null) {
+            WeatherAppState.currentCity = passedCity
+        }
+        updateCityView(WeatherAppState.currentCity)
 
         // Возврат назад по стеку фрагментов (BackStack, Шаг 4 Лаб 9)
         btnBack.setOnClickListener {
@@ -64,18 +67,43 @@ class ForecastFragment : Fragment() {
         }
 
         btnDetailSearch.setOnClickListener {
-            val searchedCity = etDetailCitySearch.text.toString().trim()
-            if (searchedCity.isNotEmpty()) {
-                currentCity = searchedCity
-                updateCityView(currentCity)
-                Toast.makeText(requireContext(), "Загружен прогноз для: $currentCity", Toast.LENGTH_SHORT).show()
+            performSearch()
+        }
+
+        // Поиск города при нажатии на клавиатуре телефона (Enter / Поиск)
+        etDetailCitySearch.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                actionId == EditorInfo.IME_ACTION_DONE ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            ) {
+                performSearch()
+                true
             } else {
-                Toast.makeText(requireContext(), "Введите название города", Toast.LENGTH_SHORT).show()
+                false
             }
         }
 
         populateHourlyForecast()
         populateWeeklyForecast()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateCityView(WeatherAppState.currentCity)
+    }
+
+    private fun performSearch() {
+        val searchedCity = etDetailCitySearch.text.toString().trim()
+        if (searchedCity.isNotEmpty()) {
+            WeatherAppState.currentCity = searchedCity
+            updateCityView(WeatherAppState.currentCity)
+            hideKeyboard()
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     private fun updateCityView(cityName: String) {

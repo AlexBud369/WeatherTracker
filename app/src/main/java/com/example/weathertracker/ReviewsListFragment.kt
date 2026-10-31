@@ -61,20 +61,17 @@ class ReviewsListFragment : Fragment() {
         adapter = ReviewCardAdapter(
             reviews = displayedReviews,
             onItemClick = { review ->
-                // Переход к экрану детального просмотра отзыва (Экран 5) с передачей аргументов (Шаг 5 Лаб 9)
                 val viewFragment = ViewReviewFragment.newInstance(review)
                 (activity as? MainActivity)?.openFragment(viewFragment, addToBackStack = true)
             },
             onEditClick = { review ->
-                // Переход в экран редактирования отзыва (Экран 4)
                 val editFragment = AddReviewFragment.newInstance(review = review)
                 (activity as? MainActivity)?.openFragment(editFragment, addToBackStack = true)
             },
             onDeleteClick = { review ->
-                // Удаление отзыва с подтверждением
                 AlertDialog.Builder(requireContext())
                     .setTitle("Удаление отзыва")
-                    .setMessage("Вы уверены, что хотите удалить отзыв по городу ${review.city}?")
+                    .setMessage("Вы уверены, что хотите удалить этот отзыв по городу ${review.city}?")
                     .setPositiveButton("Удалить") { _, _ ->
                         ReviewRepository.removeReview(review)
                         Toast.makeText(requireContext(), "Отзыв удален", Toast.LENGTH_SHORT).show()
@@ -92,14 +89,7 @@ class ReviewsListFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener(
             "review_added",
             viewLifecycleOwner
-        ) { _, bundle ->
-            val title = bundle.getString("title") ?: ""
-            val city = bundle.getString("city") ?: ""
-            Toast.makeText(
-                requireContext(),
-                "Отзыв сохранен: «$title» ($city)",
-                Toast.LENGTH_SHORT
-            ).show()
+        ) { _, _ ->
             refreshReviewsList()
         }
 
@@ -113,7 +103,7 @@ class ReviewsListFragment : Fragment() {
         btnSort.setOnClickListener {
             val sortOptions = arrayOf("Сначала новые", "Сначала старые", "По названию города (А-Я)")
             AlertDialog.Builder(requireContext())
-                .setTitle("Выберите сортировку")
+                .setTitle("Сортировка отзывов")
                 .setSingleChoiceItems(sortOptions, sortMode) { dialog, which ->
                     sortMode = which
                     dialog.dismiss()
@@ -131,7 +121,7 @@ class ReviewsListFragment : Fragment() {
                 else -> 0
             }
             AlertDialog.Builder(requireContext())
-                .setTitle("Фильтровать по статусу")
+                .setTitle("Фильтрация по статусу")
                 .setSingleChoiceItems(filterOptions, currentChecked) { dialog, which ->
                     filterMode = when (which) {
                         1 -> "Совпало"
@@ -149,16 +139,11 @@ class ReviewsListFragment : Fragment() {
             filterMode = "Все"
             sortMode = 0
             applyFilterAndSort()
-            Toast.makeText(requireContext(), "Фильтры сброшены", Toast.LENGTH_SHORT).show()
         }
 
-        // Пагинация
-        btnPrevPage.setOnClickListener {
-            Toast.makeText(requireContext(), "Вы на первой странице", Toast.LENGTH_SHORT).show()
-        }
-        btnNextPage.setOnClickListener {
-            Toast.makeText(requireContext(), "Все элементы отображены на текущей странице", Toast.LENGTH_SHORT).show()
-        }
+        // Пагинация (на одной странице)
+        btnPrevPage.setOnClickListener { }
+        btnNextPage.setOnClickListener { }
 
         refreshReviewsList()
     }

@@ -1,13 +1,16 @@
 package com.example.weathertracker
 
+import android.content.Context
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.card.MaterialCardView
 
@@ -32,8 +35,6 @@ class WeatherMainFragment : Fragment() {
     private lateinit var btnShowDetails: Button
     private lateinit var btnAddReview: Button
     private lateinit var tvLatestReviewNotice: TextView
-
-    private var currentCity: String = "Москва"
 
     private val hideNoticeRunnable = Runnable {
         view?.let {
@@ -74,7 +75,7 @@ class WeatherMainFragment : Fragment() {
         btnAddReview = view.findViewById(R.id.btnAddReview)
         tvLatestReviewNotice = view.findViewById(R.id.tvLatestReviewNotice)
 
-        updateWeatherDisplay(currentCity)
+        updateWeatherDisplay(WeatherAppState.currentCity)
 
         // Слушатель результатов из дочерних фрагментов (Fragment Result API, Шаг 5 Лаб 9)
         parentFragmentManager.setFragmentResultListener(
@@ -82,7 +83,7 @@ class WeatherMainFragment : Fragment() {
             viewLifecycleOwner
         ) { _, bundle ->
             val title = bundle.getString("title") ?: "Отзыв о погоде"
-            val city = bundle.getString("city") ?: currentCity
+            val city = bundle.getString("city") ?: WeatherAppState.currentCity
             val status = bundle.getString("status") ?: "Совпало"
 
             tvLatestReviewNotice.apply {
@@ -98,40 +99,65 @@ class WeatherMainFragment : Fragment() {
             }
         }
 
-        // Поиск города
+        // Поиск города по кнопке в строке поиска
         btnSearch.setOnClickListener {
-            val query = etSearchCity.text.toString().trim()
-            if (query.isNotEmpty()) {
-                currentCity = query
-                updateWeatherDisplay(currentCity)
-                Toast.makeText(requireContext(), "Город изменен на: $currentCity", Toast.LENGTH_SHORT).show()
+            performSearch()
+        }
+
+        // Поиск города при нажатии на клавиатуре телефона (Enter / Поиск)
+        etSearchCity.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                actionId == EditorInfo.IME_ACTION_DONE ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            ) {
+                performSearch()
+                true
             } else {
-                Toast.makeText(requireContext(), "Введите название города для поиска", Toast.LENGTH_SHORT).show()
+                false
             }
         }
 
-        // Переход на экран подробного прогноза (Экран 2) с передачей города через Bundle
+        // Переход на экран подробного прогноза (Экран 2) с передачей текущего города
         btnShowDetails.setOnClickListener {
-            val forecastFragment = ForecastFragment.newInstance(currentCity)
+            val forecastFragment = ForecastFragment.newInstance(WeatherAppState.currentCity)
             (activity as? MainActivity)?.openFragment(forecastFragment, addToBackStack = true)
         }
 
-        // Открытие экрана добавления отзыва (Экран 4) с передачей города
+        // Открытие экрана добавления отзыва (Экран 4) с передачей текущего города
         btnAddReview.setOnClickListener {
-            val addReviewFragment = AddReviewFragment.newInstance(city = currentCity)
+            val addReviewFragment = AddReviewFragment.newInstance(city = WeatherAppState.currentCity)
             (activity as? MainActivity)?.openFragment(addReviewFragment, addToBackStack = true)
         }
 
-        // Открытие интерактивной карты (экран карты поверх экрана)
+        // Открытие интерактивной карты
         cardMapPreview.setOnClickListener {
-            val mapFragment = MapFragment.newInstance(currentCity)
+            val mapFragment = MapFragment.newInstance(WeatherAppState.currentCity)
             (activity as? MainActivity)?.openFragment(mapFragment, addToBackStack = true)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateWeatherDisplay(WeatherAppState.currentCity)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         tvLatestReviewNotice.removeCallbacks(hideNoticeRunnable)
+    }
+
+    private fun performSearch() {
+        val query = etSearchCity.text.toString().trim()
+        if (query.isNotEmpty()) {
+            WeatherAppState.currentCity = query
+            updateWeatherDisplay(WeatherAppState.currentCity)
+            hideKeyboard()
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     private fun updateWeatherDisplay(city: String) {

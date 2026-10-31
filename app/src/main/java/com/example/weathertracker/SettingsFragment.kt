@@ -67,11 +67,9 @@ class SettingsFragment : Fragment() {
         }
 
         btnSaveSettings.setOnClickListener {
-            val selectedLang = spinnerLanguage.selectedItem.toString()
-            val tempUnit = if (rgTemperature.checkedRadioButtonId == R.id.rbCelsius) "°C" else "°F"
             Toast.makeText(
                 requireContext(),
-                "Настройки сохранены: Язык ($selectedLang), Единицы ($tempUnit)",
+                "Настройки сохранены",
                 Toast.LENGTH_SHORT
             ).show()
         }
