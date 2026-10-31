@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0F172A">
+
+    <!-- Top App Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="#1E293B">
+
+        <ImageButton
+            android:id="@+id/btnBackFromMap"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back"
+            app:tint="#FFFFFF"
+            android:contentDescription="Назад" />
+
+        <TextView
+            android:id="@+id/tvMapHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="Интерактивная карта: Москва"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+    <!-- Карта во весь экран -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_map_placeholder">
+
+        <!-- Слой радара и сетки -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_location"
+                android:contentDescription="Маркер" />
+
+            <TextView
+                android:id="@+id/tvMapPinCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="#80000000"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="Москва: +18°C, Ясно"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Кнопки зума -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="16dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnZoomIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_add"
+                app:tint="#1E88E5"
+                app:backgroundTint="#FFFFFF"
+                android:contentDescription="Приблизить" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnZoomOut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_delete"
+                app:tint="#1E88E5"
+                app:backgroundTint="#FFFFFF"
+                android:contentDescription="Отдалить" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Нижняя панель карты -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#1E293B">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Слой: Радар осадков и ветровых потоков"
+            android:textColor="#94A3B8"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btnCloseMap"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:text="Закрыть карту и вернуться"
+            android:textSize="14sp"
+            android:backgroundTint="#1E88E5" />
+    </LinearLayout>
+
+</LinearLayout>

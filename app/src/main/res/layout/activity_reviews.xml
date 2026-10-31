@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8FAFC">
+
+    <!-- Top App Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="#FFFFFF"
+        android:elevation="3dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Мои отзывы"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#1E293B" />
+
+        <Button
+            android:id="@+id/btnAddNewReview"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="+ Отзыв"
+            android:textSize="12sp"
+            android:backgroundTint="#1E88E5" />
+    </LinearLayout>
+
+    <!-- Панель: Сортировка, Фильтрация, Сброс -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp"
+        android:background="#FFFFFF"
+        android:elevation="1dp">
+
+        <Button
+            android:id="@+id/btnSort"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp"
+            android:text="Сортировка"
+            android:textSize="11sp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:icon="@drawable/ic_sort"
+            app:iconSize="14dp"
+            app:iconGravity="textStart" />
+
+        <Button
+            android:id="@+id/btnFilter"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="4dp"
+            android:text="Фильтр"
+            android:textSize="11sp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:icon="@drawable/ic_filter"
+            app:iconSize="14dp"
+            app:iconGravity="textStart" />
+
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:text="Сброс"
+            android:textSize="11sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+    </LinearLayout>
+
+    <!-- Индикатор активного фильтра -->
+    <TextView
+        android:id="@+id/tvFilterStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        android:text="Фильтр: Все | Сортировка: Новые сначала"
+        android:textSize="12sp"
+        android:textColor="#64748B"
+        android:background="#F1F5F9" />
+
+    <!-- Список отзывов -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvReviews"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingVertical="8dp" />
+
+        <TextView
+            android:id="@+id/tvEmptyReviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Отзывов пока нет.\nНажмите «+ Отзыв», чтобы добавить первый!"
+            android:textAlignment="center"
+            android:textColor="#94A3B8"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- Пагинация -->
+    <LinearLayout
+        android:id="@+id/layoutPagination"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#FFFFFF"
+        android:elevation="2dp"
+        android:paddingHorizontal="16dp">
+
+        <Button
+            android:id="@+id/btnPrevPage"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="‹ Назад"
+            android:textSize="11sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+        <TextView
+            android:id="@+id/tvPaginationInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Стр. 1 из 1 (Всего: 4)"
+            android:textColor="#475569"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnNextPage"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Вперед ›"
+            android:textSize="11sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+    </LinearLayout>
+
+    <!-- Нижняя навигация -->
+    <include layout="@layout/layout_bottom_nav" />
+
+</LinearLayout>

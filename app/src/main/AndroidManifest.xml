@@ -11,6 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherTracker">
+
+        <!-- Экран 1: Главный экран погоды -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -23,38 +25,43 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Экран 2: Подробнее о погоде (прогноз) -->
         <activity
-            android:name=".DetailActivity"
+            android:name=".WeatherDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Экран 3: Мои отзывы -->
+        <activity
+            android:name=".ReviewsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Экран 4: Оставить отзыв -->
         <activity
             android:name=".AddReviewActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Экран 5: Просмотр отзыва -->
         <activity
-            android:name=".SecondActivity"
+            android:name=".ViewReviewActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Экран 6: Настройки -->
         <activity
-            android:name=".ReviewActivityLinear"
+            android:name=".SettingsActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Интерактивная карта (увеличение карты с главного экрана) -->
         <activity
-            android:name=".ReviewActivityConstraint"
+            android:name=".MapActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".Task1Activity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".Task2Activity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".Task3Activity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

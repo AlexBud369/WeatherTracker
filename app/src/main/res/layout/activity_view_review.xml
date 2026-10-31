@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8FAFC">
+
+    <!-- Top App Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="#FFFFFF"
+        android:elevation="3dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back"
+            android:contentDescription="Назад" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="Просмотр отзыва"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#1E293B" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Карточка отзыва -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Заголовок отзыва -->
+                    <TextView
+                        android:id="@+id/tvReviewTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Точный прогноз на выходные"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#0F172A" />
+
+                    <!-- Статус совпадения (бейдж) -->
+                    <TextView
+                        android:id="@+id/tvReviewStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp"
+                        android:background="@drawable/bg_badge_matched"
+                        android:text="Совпало"
+                        android:textColor="#2E7D32"
+                        android:textStyle="bold"
+                        android:textSize="13sp" />
+
+                    <!-- Город -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_location"
+                            android:contentDescription="Город" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Город: "
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvReviewCity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Москва"
+                            android:textColor="#0F172A"
+                            android:textStyle="bold"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                    <!-- Дата и время -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_calendar"
+                            app:tint="#64748B"
+                            android:contentDescription="Дата" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Дата и время: "
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvReviewDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="30.10.2026 10:45"
+                            android:textColor="#0F172A"
+                            android:textStyle="bold"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="16dp"
+                        android:background="#E2E8F0" />
+
+                    <!-- Комментарий -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Текстовый комментарий:"
+                        android:textColor="#64748B"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvReviewComment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:lineSpacingExtra="4dp"
+                        android:text="Прогноз был абсолютно точным..."
+                        android:textColor="#334155"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Кнопки действий -->
+            <Button
+                android:id="@+id/btnEditReview"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:text="Редактировать отзыв"
+                android:textSize="14sp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:icon="@drawable/ic_edit"
+                app:iconGravity="textStart" />
+
+            <Button
+                android:id="@+id/btnBackToList"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:text="Вернуться назад"
+                android:textSize="14sp"
+                android:backgroundTint="#1E88E5" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Нижняя навигация -->
+    <include layout="@layout/layout_bottom_nav" />
+
+</LinearLayout>

@@ -1,109 +1,253 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="#F8FAFC">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Оставить отзыв о погоде"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Город:"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/etCity"
+    <!-- Top App Bar -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Введите город (например, Москва)"
-        android:inputType="textCapWords" />
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="#FFFFFF"
+        android:elevation="3dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Дата и время:"
-        android:textSize="14sp" />
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back"
+            android:contentDescription="Назад" />
 
-    <EditText
-        android:id="@+id/etDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="30.10.2026 12:00" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Результат прогноза:"
-        android:textSize="14sp" />
-
-    <RadioGroup
-        android:id="@+id/rgStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/rbMatched"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tvAddReviewHeader"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Совпало" />
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="Оставить отзыв о погоде"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#1E293B" />
+    </LinearLayout>
 
-        <RadioButton
-            android:id="@+id/rbMismatched"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Не совпало" />
-    </RadioGroup>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Комментарий:"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/etComment"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="top|start"
-        android:hint="Опишите точность прогноза и фактическую погоду..."
-        android:inputType="textMultiLine" />
+        android:fillViewport="true">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp">
-
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="Отменить" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <Button
-            android:id="@+id/btnSave"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="Сохранить" />
-    </LinearLayout>
+            <!-- Заголовок отзыва -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Заголовок отзыва *"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#334155" />
+
+            <EditText
+                android:id="@+id/etReviewTitle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_search_bar"
+                android:hint="Например: Прогноз в Москве был точным"
+                android:inputType="textCapSentences"
+                android:paddingHorizontal="12dp"
+                android:textColor="#0F172A"
+                android:textSize="15sp" />
+
+            <!-- Город (выпадающий список с поиском) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Город *"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#334155" />
+
+            <AutoCompleteTextView
+                android:id="@+id/actvCity"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_search_bar"
+                android:hint="Выберите или введите город"
+                android:completionThreshold="1"
+                android:inputType="textCapWords"
+                android:paddingHorizontal="12dp"
+                android:textColor="#0F172A"
+                android:textSize="15sp" />
+
+            <!-- Дата и Время -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <!-- Дата: календарь -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Дата"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#334155" />
+
+                    <Button
+                        android:id="@+id/btnPickDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="6dp"
+                        android:text="30.10.2026"
+                        android:textSize="13sp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        app:icon="@drawable/ic_calendar"
+                        app:iconGravity="textStart" />
+                </LinearLayout>
+
+                <!-- Время -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Время"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#334155" />
+
+                    <Button
+                        android:id="@+id/btnPickTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="6dp"
+                        android:text="10:45"
+                        android:textSize="13sp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        app:icon="@drawable/ic_time"
+                        app:iconGravity="textStart" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Кнопка/переключатель: совпало / не совпало -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Результат прогноза *"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#334155" />
+
+            <RadioGroup
+                android:id="@+id/rgStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbMatched"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="Совпало"
+                    android:textColor="#2E7D32"
+                    android:textStyle="bold" />
+
+                <RadioButton
+                    android:id="@+id/rbMismatched"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Не совпало"
+                    android:textColor="#D32F2F"
+                    android:textStyle="bold" />
+            </RadioGroup>
+
+            <!-- Текстовый комментарий -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Текстовый комментарий *"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#334155" />
+
+            <EditText
+                android:id="@+id/etReviewComment"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_search_bar"
+                android:gravity="top|start"
+                android:hint="Опишите погоду подробно: температуру, осадки, ветер и совпадение с прогнозом..."
+                android:inputType="textMultiLine"
+                android:padding="12dp"
+                android:textColor="#0F172A"
+                android:textSize="14sp" />
+
+            <!-- Кнопки: Сохранить и Отменить -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnCancel"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:text="Отменить"
+                    android:textSize="14sp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:text="Сохранить"
+                    android:textSize="14sp"
+                    android:backgroundTint="#1E88E5" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Нижняя навигация -->
+    <include layout="@layout/layout_bottom_nav" />
 
 </LinearLayout>

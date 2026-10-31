@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8FAFC">
+
+    <!-- Top App Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="#FFFFFF"
+        android:elevation="3dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Настройки"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#1E293B" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- ПОДРАЗДЕЛ: ПРЕДСТАВЛЕНИЕ -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ПРЕДСТАВЛЕНИЕ"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#1E88E5"
+                android:letterSpacing="0.08" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Язык -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Язык интерфейса"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#334155" />
+
+                    <Spinner
+                        android:id="@+id/spinnerLanguage"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/bg_search_bar" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="#F1F5F9" />
+
+                    <!-- Тема: Переключатель -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Тема оформления"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="#334155" />
+
+                            <TextView
+                                android:id="@+id/tvThemeSubtitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Светлая тема"
+                                android:textSize="12sp"
+                                android:textColor="#64748B" />
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchTheme"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ПОДРАЗДЕЛ: ПОГОДА -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="ПОГОДА"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#1E88E5"
+                android:letterSpacing="0.08" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Температура: Цельсий / Фаренгейт -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Единицы температуры"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#334155" />
+
+                    <RadioGroup
+                        android:id="@+id/rgTemperature"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rbCelsius"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="true"
+                            android:text="°C (Цельсий)"
+                            android:textSize="13sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbFahrenheit"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="°F (Фаренгейт)"
+                            android:textSize="13sp" />
+                    </RadioGroup>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="#F1F5F9" />
+
+                    <!-- Скорость ветра: м/с, км/ч, миль/ч -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Скорость ветра"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#334155" />
+
+                    <RadioGroup
+                        android:id="@+id/rgWind"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="vertical">
+
+                        <RadioButton
+                            android:id="@+id/rbWindMs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="м/с (метры в секунду)"
+                            android:textSize="13sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbWindKmh"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="км/ч (километры в час)"
+                            android:textSize="13sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbWindMph"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="миль/ч (мили в час)"
+                            android:textSize="13sp" />
+                    </RadioGroup>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="#F1F5F9" />
+
+                    <!-- Атмосферное давление -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Атмосферное давление"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#334155" />
+
+                    <RadioGroup
+                        android:id="@+id/rgPressure"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="vertical">
+
+                        <RadioButton
+                            android:id="@+id/rbPressureMm"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="мм рт. ст. (миллиметры ртутного столба)"
+                            android:textSize="13sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbPressureHpa"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="гПа (гектопаскали)"
+                            android:textSize="13sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbPressureMbar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="мбар (миллибары)"
+                            android:textSize="13sp" />
+                    </RadioGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ПОДРАЗДЕЛ: УВЕДОМЛЕНИЯ -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="УВЕДОМЛЕНИЯ"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#1E88E5"
+                android:letterSpacing="0.08" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Уведомления о погоде"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="#334155" />
+
+                        <TextView
+                            android:id="@+id/tvNotificationStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="вкл. / выкл"
+                            android:textSize="12sp"
+                            android:textColor="#64748B" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switchNotifications"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Кнопка сохранения настроек -->
+            <Button
+                android:id="@+id/btnSaveSettings"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:text="Сохранить настройки"
+                android:textSize="14sp"
+                android:backgroundTint="#1E88E5" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Нижняя навигация -->
+    <include layout="@layout/layout_bottom_nav" />
+
+</LinearLayout>

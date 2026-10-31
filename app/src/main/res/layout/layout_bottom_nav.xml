@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomNavigationView"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:orientation="horizontal"
+    android:background="#FFFFFF"
+    android:elevation="8dp"
+    android:baselineAligned="false">
+
+    <!-- 1. Погода -->
+    <LinearLayout
+        android:id="@+id/navWeather"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless">
+
+        <ImageView
+            android:id="@+id/ivNavWeather"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_weather"
+            android:contentDescription="Погода" />
+
+        <TextView
+            android:id="@+id/tvNavWeather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Погода"
+            android:textSize="12sp"
+            android:textColor="#718096"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
+
+    <!-- 2. Прогноз -->
+    <LinearLayout
+        android:id="@+id/navForecast"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless">
+
+        <ImageView
+            android:id="@+id/ivNavForecast"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_forecast"
+            android:contentDescription="Прогноз" />
+
+        <TextView
+            android:id="@+id/tvNavForecast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Прогноз"
+            android:textSize="12sp"
+            android:textColor="#718096"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
+
+    <!-- 3. Отзывы -->
+    <LinearLayout
+        android:id="@+id/navReviews"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless">
+
+        <ImageView
+            android:id="@+id/ivNavReviews"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_reviews"
+            android:contentDescription="Отзывы" />
+
+        <TextView
+            android:id="@+id/tvNavReviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Отзывы"
+            android:textSize="12sp"
+            android:textColor="#718096"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
+
+    <!-- 4. Настройки -->
+    <LinearLayout
+        android:id="@+id/navSettings"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless">
+
+        <ImageView
+            android:id="@+id/ivNavSettings"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_settings"
+            android:contentDescription="Настройки" />
+
+        <TextView
+            android:id="@+id/tvNavSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Настройки"
+            android:textSize="12sp"
+            android:textColor="#718096"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
+
+</LinearLayout>
