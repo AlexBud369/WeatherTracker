@@ -6,44 +6,15 @@
     android:orientation="vertical"
     android:background="#0F172A">
 
-    <!-- Top App Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:background="#1E293B">
 
-        <ImageButton
-            android:id="@+id/btnBackFromMap"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
-            app:tint="#FFFFFF"
-            android:contentDescription="РќР°Р·Р°Рґ" />
-
-        <TextView
-            android:id="@+id/tvMapHeader"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="12dp"
-            android:text="РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РєР°СЂС‚Р°: РњРѕСЃРєРІР°"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF" />
-    </LinearLayout>
-
-    <!-- РљР°СЂС‚Р° РІРѕ РІРµСЃСЊ СЌРєСЂР°РЅ -->
+    <!-- Карта во весь экран -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@drawable/bg_map_placeholder">
 
-        <!-- РЎР»РѕР№ СЂР°РґР°СЂР° Рё РјРµС‚РєР° РіРѕСЂРѕРґР° -->
+        <!-- Слой радара и метка города -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +26,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/ic_location"
-                android:contentDescription="РњР°СЂРєРµСЂ" />
+                android:contentDescription="Маркер" />
 
             <TextView
                 android:id="@+id/tvMapPinCity"
@@ -65,13 +36,13 @@
                 android:background="#80000000"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
-                android:text="РњРѕСЃРєРІР°: +18В°C, РЇСЃРЅРѕ"
+                android:text="Москва: +18°C, Ясно"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <!-- РљРЅРѕРїРєРё Р·СѓРјР° -->
+        <!-- Кнопки зума -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,7 +60,7 @@
                 app:srcCompat="@drawable/ic_add"
                 app:tint="#1E88E5"
                 app:backgroundTint="#FFFFFF"
-                android:contentDescription="РџСЂРёР±Р»РёР·РёС‚СЊ" />
+                android:contentDescription="Приблизить" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btnZoomOut"
@@ -99,11 +70,11 @@
                 app:srcCompat="@drawable/ic_delete"
                 app:tint="#1E88E5"
                 app:backgroundTint="#FFFFFF"
-                android:contentDescription="РћС‚РґР°Р»РёС‚СЊ" />
+                android:contentDescription="Отдалить" />
         </LinearLayout>
     </RelativeLayout>
 
-    <!-- РќРёР¶РЅСЏСЏ РїР°РЅРµР»СЊ РєР°СЂС‚С‹ -->
+    <!-- Нижняя панель карты -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -114,7 +85,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="РЎР»РѕР№: Р Р°РґР°СЂ РѕСЃР°РґРєРѕРІ Рё РІРµС‚СЂРѕРІС‹С… РїРѕС‚РѕРєРѕРІ"
+            android:text="Слой: Радар осадков и ветровых потоков"
             android:textColor="#94A3B8"
             android:textSize="13sp" />
 
@@ -123,7 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="12dp"
-            android:text="Р—Р°РєСЂС‹С‚СЊ РєР°СЂС‚Сѓ Рё РІРµСЂРЅСѓС‚СЊСЃСЏ"
+            android:text="Закрыть карту и вернуться"
             android:textSize="14sp"
             android:backgroundTint="#1E88E5" />
     </LinearLayout>
