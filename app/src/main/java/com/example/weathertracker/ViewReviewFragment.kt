@@ -77,14 +77,7 @@ class ViewReviewFragment : Fragment() {
         val status = arguments?.getString(ARG_STATUS) ?: "Совпало"
         val comment = arguments?.getString(ARG_COMMENT) ?: "Комментарий отсутствует"
         val reviewId = arguments?.getLong(ARG_REVIEW_ID, 0L) ?: 0L
-        currentReview = Review(
-            id = reviewId,
-            title = title,
-            city = city,
-            date = date,
-            status = status,
-            comment = comment
-        )
+        currentReview = Review(reviewId, city, date, status, comment, title)
     }
 
     private fun displayReviewData() {

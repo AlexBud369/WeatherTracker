@@ -203,24 +203,12 @@ class AddReviewFragment : Fragment() {
     }
 
     private suspend fun updateExistingReview(title: String, city: String, fullDate: String, status: String, comment: String) {
-        val updated = editingReview!!.copy(
-            title = title,
-            city = city,
-            date = fullDate,
-            status = status,
-            comment = comment
-        )
+        val updated = editingReview!!.copy(title, city, fullDate, status, comment)
         ReviewRepository.updateReview(updated)
     }
 
     private suspend fun createNewReview(title: String, city: String, fullDate: String, status: String, comment: String) {
-        val newReview = Review(
-            title = title,
-            city = city,
-            date = fullDate,
-            status = status,
-            comment = comment
-        )
+        val newReview = Review(0L, city, fullDate, status, comment, title)
         ReviewRepository.addReview(newReview)
     }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -11,36 +12,46 @@ object ReviewRepository {
 
     private lateinit var database: AppDatabase
     private val repositoryScope = CoroutineScope(Dispatchers.IO)
+    private val reviewsChannel = MutableStateFlow<List<Review>>(emptyList())
 
     fun init(context: Context) {
         database = AppDatabase.getDatabase(context)
         repositoryScope.launch {
             populateInitialReviewsIfEmpty()
+            refreshChannel()
         }
     }
 
     fun getReviewsFlow(): Flow<List<Review>> {
-        return database.reviewDao().getAllReviews()
+        return reviewsChannel
     }
 
     suspend fun getReviews(): List<Review> = withContext(Dispatchers.IO) {
-        database.reviewDao().getAllReviewsList()
+        database.reviewDao().allReviews
     }
 
     suspend fun addReview(review: Review) = withContext(Dispatchers.IO) {
         database.reviewDao().insertReview(review)
+        refreshChannel()
     }
 
     suspend fun removeReview(review: Review) = withContext(Dispatchers.IO) {
         database.reviewDao().deleteReview(review)
+        refreshChannel()
     }
 
     suspend fun updateReview(updatedReview: Review) = withContext(Dispatchers.IO) {
         database.reviewDao().updateReview(updatedReview)
+        refreshChannel()
+    }
+
+    private suspend fun refreshChannel() {
+        val currentList = database.reviewDao().allReviews
+        reviewsChannel.value = currentList
     }
 
     private suspend fun populateInitialReviewsIfEmpty() {
-        val existing = database.reviewDao().getAllReviewsList()
+        val existing = database.reviewDao().allReviews
         if (existing.isEmpty()) {
             val initialList = createInitialReviews()
             database.reviewDao().insertAll(initialList)
@@ -54,18 +65,20 @@ object ReviewRepository {
     private fun createWesternReviews(): List<Review> {
         return listOf(
             Review(
-                city = "Москва",
-                date = "30.10.2026 10:45",
-                status = "Совпало",
-                comment = "Прогноз был абсолютно точным: солнечно, тепло, температура совпала градус в градус.",
-                title = "Точный прогноз на выходные"
+                0L,
+                "Москва",
+                "30.10.2026 10:45",
+                "Совпало",
+                "Прогноз был абсолютно точным: солнечно, тепло, температура совпала градус в градус.",
+                "Точный прогноз на выходные"
             ),
             Review(
-                city = "Санкт-Петербург",
-                date = "29.10.2026 15:30",
-                status = "Не совпало",
-                comment = "Обещали ясную погоду без осадков, но после обеда пошел сильный дождь с ветром.",
-                title = "Неожиданный дождь"
+                0L,
+                "Санкт-Петербург",
+                "29.10.2026 15:30",
+                "Не совпало",
+                "Обещали ясную погоду без осадков, но после обеда пошел сильный дождь с ветром.",
+                "Неожиданный дождь"
             )
         )
     }
@@ -73,18 +86,20 @@ object ReviewRepository {
     private fun createEasternReviews(): List<Review> {
         return listOf(
             Review(
-                city = "Казань",
-                date = "28.10.2026 18:00",
-                status = "Совпало",
-                comment = "Предупреждение о сильном ветре оправдалось. Было около 12 м/с.",
-                title = "Ветрено в Казани"
+                0L,
+                "Казань",
+                "28.10.2026 18:00",
+                "Совпало",
+                "Предупреждение о сильном ветре оправдалось. Было около 12 м/с.",
+                "Ветрено в Казани"
             ),
             Review(
-                city = "Новосибирск",
-                date = "27.10.2026 08:00",
-                status = "Совпало",
-                comment = "Утром было прохладно, как и предсказывали в почасовом прогнозе.",
-                title = "Утренний мороз"
+                0L,
+                "Новосибирск",
+                "27.10.2026 08:00",
+                "Совпало",
+                "Утром было прохладно, как и предсказывали в почасовом прогнозе.",
+                "Утренний мороз"
             )
         )
     }
