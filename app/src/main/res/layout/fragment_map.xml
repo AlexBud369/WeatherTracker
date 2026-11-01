@@ -22,7 +22,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_back"
             app:tint="#FFFFFF"
-            android:contentDescription="Назад" />
+            android:contentDescription="РќР°Р·Р°Рґ" />
 
         <TextView
             android:id="@+id/tvMapHeader"
@@ -30,20 +30,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="12dp"
-            android:text="Интерактивная карта: Москва"
+            android:text="РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РєР°СЂС‚Р°: РњРѕСЃРєРІР°"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
-    <!-- Карта во весь экран -->
+    <!-- РљР°СЂС‚Р° РІРѕ РІРµСЃСЊ СЌРєСЂР°РЅ -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@drawable/bg_map_placeholder">
 
-        <!-- Слой радара и метка города -->
+        <!-- РЎР»РѕР№ СЂР°РґР°СЂР° Рё РјРµС‚РєР° РіРѕСЂРѕРґР° -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/ic_location"
-                android:contentDescription="Маркер" />
+                android:contentDescription="РњР°СЂРєРµСЂ" />
 
             <TextView
                 android:id="@+id/tvMapPinCity"
@@ -65,13 +65,13 @@
                 android:background="#80000000"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
-                android:text="Москва: +18°C, Ясно"
+                android:text="РњРѕСЃРєРІР°: +18В°C, РЇСЃРЅРѕ"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <!-- Кнопки зума -->
+        <!-- РљРЅРѕРїРєРё Р·СѓРјР° -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
                 app:srcCompat="@drawable/ic_add"
                 app:tint="#1E88E5"
                 app:backgroundTint="#FFFFFF"
-                android:contentDescription="Приблизить" />
+                android:contentDescription="РџСЂРёР±Р»РёР·РёС‚СЊ" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btnZoomOut"
@@ -99,11 +99,11 @@
                 app:srcCompat="@drawable/ic_delete"
                 app:tint="#1E88E5"
                 app:backgroundTint="#FFFFFF"
-                android:contentDescription="Отдалить" />
+                android:contentDescription="РћС‚РґР°Р»РёС‚СЊ" />
         </LinearLayout>
     </RelativeLayout>
 
-    <!-- Нижняя панель карты -->
+    <!-- РќРёР¶РЅСЏСЏ РїР°РЅРµР»СЊ РєР°СЂС‚С‹ -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -114,7 +114,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Слой: Радар осадков и ветровых потоков"
+            android:text="РЎР»РѕР№: Р Р°РґР°СЂ РѕСЃР°РґРєРѕРІ Рё РІРµС‚СЂРѕРІС‹С… РїРѕС‚РѕРєРѕРІ"
             android:textColor="#94A3B8"
             android:textSize="13sp" />
 
@@ -123,7 +123,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="12dp"
-            android:text="Закрыть карту и вернуться"
+            android:text="Р—Р°РєСЂС‹С‚СЊ РєР°СЂС‚Сѓ Рё РІРµСЂРЅСѓС‚СЊСЃСЏ"
             android:textSize="14sp"
             android:backgroundTint="#1E88E5" />
     </LinearLayout>

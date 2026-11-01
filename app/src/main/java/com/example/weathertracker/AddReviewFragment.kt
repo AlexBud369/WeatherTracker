@@ -10,10 +10,8 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import java.util.Calendar
 import java.util.Locale
@@ -45,8 +43,6 @@ class AddReviewFragment : Fragment() {
     private lateinit var etReviewComment: EditText
     private lateinit var btnSave: Button
     private lateinit var btnCancel: Button
-    private lateinit var btnBack: ImageButton
-    private lateinit var tvAddReviewHeader: TextView
 
     private var selectedDate: String = "30.10.2026"
     private var selectedTime: String = "10:45"
@@ -80,8 +76,6 @@ class AddReviewFragment : Fragment() {
         etReviewComment = view.findViewById(R.id.etReviewComment)
         btnSave = view.findViewById(R.id.btnSave)
         btnCancel = view.findViewById(R.id.btnCancel)
-        btnBack = view.findViewById(R.id.btnBack)
-        tvAddReviewHeader = view.findViewById(R.id.tvAddReviewHeader)
     }
 
     private fun setupCityAutocomplete() {
@@ -103,11 +97,12 @@ class AddReviewFragment : Fragment() {
         } else {
             val cityToUse = if (!initialCity.isNullOrBlank()) initialCity else WeatherAppState.currentCity
             actvCity.setText(cityToUse)
+            (activity as? MainActivity)?.updateToolbar("Оставить отзыв", true)
         }
     }
 
     private fun populateEditingReview(review: Review) {
-        tvAddReviewHeader.text = "Редактировать отзыв"
+        (activity as? MainActivity)?.updateToolbar("Редактировать отзыв", true)
         etReviewTitle.setText(review.title)
         actvCity.setText(review.city)
         etReviewComment.setText(review.comment)
@@ -124,6 +119,11 @@ class AddReviewFragment : Fragment() {
     }
 
     private fun setupDateTimePickers() {
+        setupDatePicker()
+        setupTimePicker()
+    }
+
+    private fun setupDatePicker() {
         btnPickDate.setOnClickListener {
             val calendar = Calendar.getInstance()
             DatePickerDialog(
@@ -137,6 +137,9 @@ class AddReviewFragment : Fragment() {
                 calendar.get(Calendar.DAY_OF_MONTH)
             ).show()
         }
+    }
+
+    private fun setupTimePicker() {
         btnPickTime.setOnClickListener {
             val calendar = Calendar.getInstance()
             TimePickerDialog(
@@ -155,7 +158,6 @@ class AddReviewFragment : Fragment() {
     private fun setupButtons() {
         btnSave.setOnClickListener { onSaveClicked() }
         btnCancel.setOnClickListener { parentFragmentManager.popBackStack() }
-        btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
     }
 
     private fun onSaveClicked() {
@@ -190,24 +192,32 @@ class AddReviewFragment : Fragment() {
 
     private fun saveReview(title: String, city: String, fullDate: String, status: String, comment: String) {
         if (editingReview != null) {
-            val updated = editingReview!!.copy(
-                title = title,
-                city = city,
-                date = fullDate,
-                status = status,
-                comment = comment
-            )
-            ReviewRepository.updateReview(updated)
+            updateExistingReview(title, city, fullDate, status, comment)
         } else {
-            val newReview = Review(
-                title = title,
-                city = city,
-                date = fullDate,
-                status = status,
-                comment = comment
-            )
-            ReviewRepository.addReview(newReview)
+            createNewReview(title, city, fullDate, status, comment)
         }
+    }
+
+    private fun updateExistingReview(title: String, city: String, fullDate: String, status: String, comment: String) {
+        val updated = editingReview!!.copy(
+            title = title,
+            city = city,
+            date = fullDate,
+            status = status,
+            comment = comment
+        )
+        ReviewRepository.updateReview(updated)
+    }
+
+    private fun createNewReview(title: String, city: String, fullDate: String, status: String, comment: String) {
+        val newReview = Review(
+            title = title,
+            city = city,
+            date = fullDate,
+            status = status,
+            comment = comment
+        )
+        ReviewRepository.addReview(newReview)
     }
 
     private fun sendFragmentResult(title: String, city: String, status: String, comment: String) {

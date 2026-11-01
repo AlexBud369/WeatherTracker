@@ -6,26 +6,6 @@
     android:orientation="vertical"
     android:background="#F8FAFC">
 
-    <!-- Top App Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:background="#FFFFFF"
-        android:elevation="3dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Настройки"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#1E293B" />
-    </LinearLayout>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,11 +17,11 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- ПОДРАЗДЕЛ: ПРЕДСТАВЛЕНИЕ -->
+            <!-- РџРћР”Р РђР—Р”Р•Р›: РџР Р•Р”РЎРўРђР’Р›Р•РќРР• -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ПРЕДСТАВЛЕНИЕ"
+                android:text="РџР Р•Р”РЎРўРђР’Р›Р•РќРР•"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="#1E88E5"
@@ -63,11 +43,11 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <!-- Язык -->
+                    <!-- РЇР·С‹Рє -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Язык интерфейса"
+                        android:text="РЇР·С‹Рє РёРЅС‚РµСЂС„РµР№СЃР°"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:textColor="#334155" />
@@ -85,7 +65,7 @@
                         android:layout_marginVertical="12dp"
                         android:background="#F1F5F9" />
 
-                    <!-- Тема: Переключатель -->
+                    <!-- РўРµРјР°: РџРµСЂРµРєР»СЋС‡Р°С‚РµР»СЊ -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -101,7 +81,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Тема оформления"
+                                android:text="РўРµРјР° РѕС„РѕСЂРјР»РµРЅРёСЏ"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 android:textColor="#334155" />
@@ -110,7 +90,7 @@
                                 android:id="@+id/tvThemeSubtitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Светлая тема"
+                                android:text="РЎРІРµС‚Р»Р°СЏ С‚РµРјР°"
                                 android:textSize="12sp"
                                 android:textColor="#64748B" />
                         </LinearLayout>
@@ -123,12 +103,12 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ПОДРАЗДЕЛ: ПОГОДА -->
+            <!-- РџРћР”Р РђР—Р”Р•Р›: РџРћР“РћР”Рђ -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="ПОГОДА"
+                android:text="РџРћР“РћР”Рђ"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="#1E88E5"
@@ -150,11 +130,11 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <!-- Температура: Цельсий / Фаренгейт -->
+                    <!-- РўРµРјРїРµСЂР°С‚СѓСЂР°: Р¦РµР»СЊСЃРёР№ / Р¤Р°СЂРµРЅРіРµР№С‚ -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Единицы температуры"
+                        android:text="Р•РґРёРЅРёС†С‹ С‚РµРјРїРµСЂР°С‚СѓСЂС‹"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:textColor="#334155" />
@@ -172,7 +152,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:text="°C (Цельсий)"
+                            android:text="В°C (Р¦РµР»СЊСЃРёР№)"
                             android:textSize="13sp" />
 
                         <RadioButton
@@ -180,7 +160,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="°F (Фаренгейт)"
+                            android:text="В°F (Р¤Р°СЂРµРЅРіРµР№С‚)"
                             android:textSize="13sp" />
                     </RadioGroup>
 
@@ -190,11 +170,11 @@
                         android:layout_marginVertical="10dp"
                         android:background="#F1F5F9" />
 
-                    <!-- Скорость ветра: м/с, км/ч, миль/ч -->
+                    <!-- РЎРєРѕСЂРѕСЃС‚СЊ РІРµС‚СЂР°: Рј/СЃ, РєРј/С‡, РјРёР»СЊ/С‡ -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Скорость ветра"
+                        android:text="РЎРєРѕСЂРѕСЃС‚СЊ РІРµС‚СЂР°"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:textColor="#334155" />
@@ -211,21 +191,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="м/с (метры в секунду)"
+                            android:text="Рј/СЃ (РјРµС‚СЂС‹ РІ СЃРµРєСѓРЅРґСѓ)"
                             android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbWindKmh"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="км/ч (километры в час)"
+                            android:text="РєРј/С‡ (РєРёР»РѕРјРµС‚СЂС‹ РІ С‡Р°СЃ)"
                             android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbWindMph"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="миль/ч (мили в час)"
+                            android:text="РјРёР»СЊ/С‡ (РјРёР»Рё РІ С‡Р°СЃ)"
                             android:textSize="13sp" />
                     </RadioGroup>
 
@@ -235,11 +215,11 @@
                         android:layout_marginVertical="10dp"
                         android:background="#F1F5F9" />
 
-                    <!-- Атмосферное давление -->
+                    <!-- РђС‚РјРѕСЃС„РµСЂРЅРѕРµ РґР°РІР»РµРЅРёРµ -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Атмосферное давление"
+                        android:text="РђС‚РјРѕСЃС„РµСЂРЅРѕРµ РґР°РІР»РµРЅРёРµ"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:textColor="#334155" />
@@ -256,32 +236,32 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="мм рт. ст. (миллиметры ртутного столба)"
+                            android:text="РјРј СЂС‚. СЃС‚. (РјРёР»Р»РёРјРµС‚СЂС‹ СЂС‚СѓС‚РЅРѕРіРѕ СЃС‚РѕР»Р±Р°)"
                             android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbPressureHpa"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="гПа (гектопаскали)"
+                            android:text="РіРџР° (РіРµРєС‚РѕРїР°СЃРєР°Р»Рё)"
                             android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbPressureMbar"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="мбар (миллибары)"
+                            android:text="РјР±Р°СЂ (РјРёР»Р»РёР±Р°СЂС‹)"
                             android:textSize="13sp" />
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ПОДРАЗДЕЛ: УВЕДОМЛЕНИЯ -->
+            <!-- РџРћР”Р РђР—Р”Р•Р›: РЈР’Р•Р”РћРњР›Р•РќРРЇ -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="УВЕДОМЛЕНИЯ"
+                android:text="РЈР’Р•Р”РћРњР›Р•РќРРЇ"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="#1E88E5"
@@ -313,7 +293,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Уведомления о погоде"
+                            android:text="РЈРІРµРґРѕРјР»РµРЅРёСЏ Рѕ РїРѕРіРѕРґРµ"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="#334155" />
@@ -322,7 +302,7 @@
                             android:id="@+id/tvNotificationStatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="вкл. / выкл"
+                            android:text="РІРєР». / РІС‹РєР»"
                             android:textSize="12sp"
                             android:textColor="#64748B" />
                     </LinearLayout>
@@ -335,13 +315,13 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Кнопка сохранения настроек -->
+            <!-- РљРЅРѕРїРєР° СЃРѕС…СЂР°РЅРµРЅРёСЏ РЅР°СЃС‚СЂРѕРµРє -->
             <Button
                 android:id="@+id/btnSaveSettings"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="20dp"
-                android:text="Сохранить настройки"
+                android:text="РЎРѕС…СЂР°РЅРёС‚СЊ РЅР°СЃС‚СЂРѕР№РєРё"
                 android:textSize="14sp"
                 android:backgroundTint="#1E88E5" />
 

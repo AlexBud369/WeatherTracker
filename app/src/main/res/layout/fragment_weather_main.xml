@@ -6,25 +6,6 @@
     android:orientation="vertical"
     android:background="#F8FAFC">
 
-    <!-- Top App Bar / Title -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:background="#FFFFFF"
-        android:elevation="3dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Прогноз погоды"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#1E293B" />
-    </LinearLayout>
-
     <!-- Scrollable content -->
     <ScrollView
         android:layout_width="match_parent"
@@ -37,7 +18,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Поисковая строка -->
+            <!-- РџРѕРёСЃРєРѕРІР°СЏ СЃС‚СЂРѕРєР° -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -51,7 +32,7 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_search"
                     app:tint="#64748B"
-                    android:contentDescription="Поиск" />
+                    android:contentDescription="РџРѕРёСЃРє" />
 
                 <EditText
                     android:id="@+id/etSearchCity"
@@ -59,7 +40,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@null"
-                    android:hint="Поиск города..."
+                    android:hint="РџРѕРёСЃРє РіРѕСЂРѕРґР°..."
                     android:imeOptions="actionSearch"
                     android:inputType="textCapWords"
                     android:paddingHorizontal="8dp"
@@ -70,12 +51,12 @@
                     android:id="@+id/btnSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="Найти"
+                    android:text="РќР°Р№С‚Рё"
                     android:textSize="12sp"
                     android:backgroundTint="#1E88E5" />
             </LinearLayout>
 
-            <!-- Карточка информации о выбранном городе -->
+            <!-- РљР°СЂС‚РѕС‡РєР° РёРЅС„РѕСЂРјР°С†РёРё Рѕ РІС‹Р±СЂР°РЅРЅРѕРј РіРѕСЂРѕРґРµ -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -102,7 +83,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_location"
-                            android:contentDescription="Локация" />
+                            android:contentDescription="Р›РѕРєР°С†РёСЏ" />
 
                         <TextView
                             android:id="@+id/tvCityName"
@@ -110,7 +91,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="8dp"
-                            android:text="Москва"
+                            android:text="РњРѕСЃРєРІР°"
                             android:textSize="22sp"
                             android:textStyle="bold"
                             android:textColor="#0F172A" />
@@ -119,7 +100,7 @@
                             android:id="@+id/tvCondition"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ясно ☀️"
+                            android:text="РЇСЃРЅРѕ вЂпёЏ"
                             android:textSize="16sp"
                             android:textColor="#0284C7"
                             android:textStyle="bold" />
@@ -130,7 +111,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Пятница, 30 октября, 10:45"
+                        android:text="РџСЏС‚РЅРёС†Р°, 30 РѕРєС‚СЏР±СЂСЏ, 10:45"
                         android:textSize="13sp"
                         android:textColor="#64748B" />
 
@@ -145,7 +126,7 @@
                             android:id="@+id/tvCurrentTemp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="+18°C"
+                            android:text="+18В°C"
                             android:textSize="44sp"
                             android:textStyle="bold"
                             android:textColor="#1E293B" />
@@ -160,14 +141,14 @@
                                 android:id="@+id/tvFeelsLike"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Ощущается как +16°C"
+                                android:text="РћС‰СѓС‰Р°РµС‚СЃСЏ РєР°Рє +16В°C"
                                 android:textSize="14sp"
                                 android:textColor="#475569" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Комфортная влажность"
+                                android:text="РљРѕРјС„РѕСЂС‚РЅР°СЏ РІР»Р°Р¶РЅРѕСЃС‚СЊ"
                                 android:textSize="12sp"
                                 android:textColor="#94A3B8" />
                         </LinearLayout>
@@ -175,7 +156,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Интерактивная карта (с возможностью увеличить) -->
+            <!-- РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РєР°СЂС‚Р° (СЃ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊСЋ СѓРІРµР»РёС‡РёС‚СЊ) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardMapPreview"
                 android:layout_width="match_parent"
@@ -204,14 +185,14 @@
                             android:layout_height="36dp"
                             android:src="@drawable/ic_map"
                             app:tint="#0369A1"
-                            android:contentDescription="Карта" />
+                            android:contentDescription="РљР°СЂС‚Р°" />
 
                         <TextView
                             android:id="@+id/tvMapCityTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="Интерактивная карта осадков: Москва"
+                            android:text="РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РєР°СЂС‚Р° РѕСЃР°РґРєРѕРІ: РњРѕСЃРєРІР°"
                             android:textColor="#0369A1"
                             android:textStyle="bold"
                             android:textSize="15sp" />
@@ -220,21 +201,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Нажмите для увеличения поверх экрана"
+                            android:text="РќР°Р¶РјРёС‚Рµ РґР»СЏ СѓРІРµР»РёС‡РµРЅРёСЏ РїРѕРІРµСЂС… СЌРєСЂР°РЅР°"
                             android:textColor="#0284C7"
                             android:textSize="12sp" />
                     </LinearLayout>
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Метрики погоды (ветер, влажность, давление) -->
+            <!-- РњРµС‚СЂРёРєРё РїРѕРіРѕРґС‹ (РІРµС‚РµСЂ, РІР»Р°Р¶РЅРѕСЃС‚СЊ, РґР°РІР»РµРЅРёРµ) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
-                <!-- Ветер -->
+                <!-- Р’РµС‚РµСЂ -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -257,13 +238,13 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_wind"
-                            android:contentDescription="Ветер" />
+                            android:contentDescription="Р’РµС‚РµСЂ" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Ветер"
+                            android:text="Р’РµС‚РµСЂ"
                             android:textColor="#64748B"
                             android:textSize="12sp" />
 
@@ -272,14 +253,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="4.2 м/с"
+                            android:text="4.2 Рј/СЃ"
                             android:textColor="#0F172A"
                             android:textStyle="bold"
                             android:textSize="13sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Влажность -->
+                <!-- Р’Р»Р°Р¶РЅРѕСЃС‚СЊ -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -302,13 +283,13 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_humidity"
-                            android:contentDescription="Влажность" />
+                            android:contentDescription="Р’Р»Р°Р¶РЅРѕСЃС‚СЊ" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Влажность"
+                            android:text="Р’Р»Р°Р¶РЅРѕСЃС‚СЊ"
                             android:textColor="#64748B"
                             android:textSize="12sp" />
 
@@ -324,7 +305,7 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Давление -->
+                <!-- Р”Р°РІР»РµРЅРёРµ -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -347,13 +328,13 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_pressure"
-                            android:contentDescription="Давление" />
+                            android:contentDescription="Р”Р°РІР»РµРЅРёРµ" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Давление"
+                            android:text="Р”Р°РІР»РµРЅРёРµ"
                             android:textColor="#64748B"
                             android:textSize="12sp" />
 
@@ -362,7 +343,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="752 мм"
+                            android:text="752 РјРј"
                             android:textColor="#0F172A"
                             android:textStyle="bold"
                             android:textSize="13sp" />
@@ -370,13 +351,13 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-            <!-- Кнопки действий -->
+            <!-- РљРЅРѕРїРєРё РґРµР№СЃС‚РІРёР№ -->
             <Button
                 android:id="@+id/btnShowDetails"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
-                android:text="Показать подробнее"
+                android:text="РџРѕРєР°Р·Р°С‚СЊ РїРѕРґСЂРѕР±РЅРµРµ"
                 android:textSize="15sp"
                 android:backgroundTint="#1E88E5"
                 app:icon="@drawable/ic_forecast"
@@ -387,13 +368,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="8dp"
-                android:text="Оставить отзыв"
+                android:text="РћСЃС‚Р°РІРёС‚СЊ РѕС‚Р·С‹РІ"
                 android:textSize="15sp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:icon="@drawable/ic_add"
                 app:iconGravity="textStart" />
 
-            <!-- Блок последнего оставленного отзыва (исчезающий по клику или таймеру) -->
+            <!-- Р‘Р»РѕРє РїРѕСЃР»РµРґРЅРµРіРѕ РѕСЃС‚Р°РІР»РµРЅРЅРѕРіРѕ РѕС‚Р·С‹РІР° (РёСЃС‡РµР·Р°СЋС‰РёР№ РїРѕ РєР»РёРєСѓ РёР»Рё С‚Р°Р№РјРµСЂСѓ) -->
             <TextView
                 android:id="@+id/tvLatestReviewNotice"
                 android:layout_width="match_parent"

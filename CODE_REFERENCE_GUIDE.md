@@ -19,7 +19,7 @@
 | **Двунаправленная навигация (кнопка Назад)** | `WeatherDetailActivity.kt`, `MapActivity.kt` | `setupListeners()`, `btnBack.setOnClickListener` | Вызов метода `finish()` для закрытия текущей Activity и возврата к предыдущей в стеке. |
 | **Запуск Activity с ожиданием результата** | `MainActivity.kt`, `ReviewsActivity.kt` | `addReviewLauncher = registerForActivityResult(...)` | Регистрация `ActivityResultLauncher` по современному контракту `StartActivityForResult()`. |
 | **Возврат результата из дочерней Activity** | `AddReviewActivity.kt` | `returnResult()` | Создание `resultIntent` с данными отзыва, вызов `setResult(Activity.RESULT_OK, resultIntent)` и последующий `finish()`. |
-| **Регистрация всех Activity в системе** | `AndroidManifest.xml` | Теги `<activity>` внутри `<application>` | Все 7 экранов объявлены через теги `<activity android:name=".MainActivity" .../>`, `<activity android:name=".WeatherDetailActivity" .../>` и т.д. |
+| **Регистрация всех Activity в системе** | `AndroidManifest.xml` | Теги `<activity>` внутри `<application>` | Все экраны объявлены через теги `<activity android:name=".MainActivity" .../>`, `<activity android:name=".WeatherDetailActivity" .../>` и т.д. |
 | **Флаги Intent для оптимизации переходов** | `NavigationHelper.kt` | `bindTabClick()` | Использование `intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT` для быстрого переключения вкладок без создания дубликатов Activity. |
 
 ---
@@ -29,7 +29,7 @@
 | Требование / Тема работы | Файл | Класс / Функция / Разметка | Пояснение, что показать преподавателю |
 |---|---|---|---|
 | **Контейнер для фрагментов FrameLayout** | `activity_main.xml` | `<FrameLayout android:id="@+id/fragment_container" .../>` | Посадочное место для динамической подмены фрагментов во весь экран над нижней навигацией. |
-| **Single-Activity Architecture** | `AndroidManifest.xml`, `MainActivity.kt` | Тег `<activity android:name=".MainActivity">` | В манифесте осталась строго одна `MainActivity`. Все 7 экранов переведены на фрагменты `Fragment`. |
+| **Single-Activity Architecture** | `AndroidManifest.xml`, `MainActivity.kt` | Тег `<activity android:name=".MainActivity">` | В манифесте осталась строго одна `MainActivity`. Все экраны приложения переведены на фрагменты `Fragment`. |
 | **Динамическая замена (FragmentManager, replace, commit)** | `MainActivity.kt` | `openFragment(fragment, addToBackStack)` | Вызов `supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit()`. |
 | **Стек возврата (addToBackStack)** | `MainActivity.kt` | `openFragment()` | Строка `transaction.addToBackStack(null)`, сохраняющая переход в стеке для корректной работы кнопки «Назад». |
 | **Возврат назад по стеку фрагментов** | `ForecastFragment.kt`, `AddReviewFragment.kt`, `ViewReviewFragment.kt`, `MapFragment.kt` | `setupListeners()`, `btnBack.setOnClickListener` | Вызов `parentFragmentManager.popBackStack()`, который возвращает предыдущий фрагмент без закрытия приложения. |
@@ -43,13 +43,27 @@
 
 ---
 
-## 📌 Будущие лабораторные работы (шпаргалка для расширения)
+## 📌 Лабораторная работа №10: «Меню, Toolbar и диалоговые окна (AlertDialog, DatePickerDialog)» (ветка `lab10`)
 
-### Лабораторная работа №10: «Меню, Toolbar и диалоговые окна (AlertDialog, DatePickerDialog)»
-- **Toolbar:** Будет настроен в `activity_main.xml` (`androidx.appcompat.widget.Toolbar`) и подключен через `setSupportActionBar(toolbar)` в `MainActivity`.
-- **XML-меню:** Файл `res/menu/main_menu.xml`, методы `onCreateOptionsMenu()` и `onOptionsItemSelected()`.
-- **AlertDialog:** Уже используется в `ReviewsListFragment.kt` (функция `confirmDeleteReview()`) для подтверждения удаления отзыва.
-- **DatePickerDialog и TimePickerDialog:** Уже используются в `AddReviewFragment.kt` (функция `setupDateTimePickers()`) для выбора даты и времени отзыва.
+| Требование / Тема работы | Файл | Класс / Функция / Разметка | Пояснение, что показать преподавателю |
+|---|---|---|---|
+| **Отключение стандартного ActionBar** | `res/values/themes.xml` | `<style name="Theme.WeatherTracker" parent="Theme.MaterialComponents.DayNight.NoActionBar">` | Тема с суффиксом `NoActionBar` отключает системную шапку, чтобы использовать кастомный `Toolbar`. |
+| **Разметка кастомного Toolbar** | `res/layout/activity_main.xml` | `<androidx.appcompat.widget.Toolbar android:id="@+id/toolbar" .../>` | Элемент `Toolbar` размещен в верхней части главного экрана над `fragment_container`. |
+| **Инициализация Toolbar как ActionBar** | `MainActivity.kt` | `setupToolbar()` | `toolbar = findViewById(R.id.toolbar)` и `setSupportActionBar(toolbar)`. |
+| **Ресурс XML-меню** | `res/menu/main_menu.xml` | `<menu> ... <item android:id="@+id/action_add" .../> ... </menu>` | Описание пунктов меню действий: Добавить отзыв (`showAsAction="ifRoom"`), Настройки, О приложении. |
+| **Инфлейт меню действий (onCreateOptionsMenu)** | `MainActivity.kt` | `onCreateOptionsMenu(menu: Menu?): Boolean` | Метод инфлейтит меню: `menuInflater.inflate(R.menu.main_menu, menu)`. |
+| **Обработка нажатий меню (onOptionsItemSelected)** | `MainActivity.kt` | `onOptionsItemSelected(item: MenuItem): Boolean` | Обработка кликов: `R.id.action_add`, `R.id.action_settings`, `R.id.action_about`, а также стрелки `android.R.id.home`. |
+| **Динамическое обновление заголовка Toolbar** | `MainActivity.kt` | `updateToolbar(title, showBackButton)`, `configureToolbarForFragment()` | При смене фрагментов `supportActionBar?.title` обновляется (например, «Прогноз погоды», «Прогноз: Москва», «Оставить отзыв»). |
+| **Стрелка «Назад» в Toolbar (Up Navigation)** | `MainActivity.kt` | `updateToolbar()`, `toolbar.setNavigationOnClickListener` | `supportActionBar?.setDisplayHomeAsUpEnabled(true)` и вызов `supportFragmentManager.popBackStack()`. |
+| **Информационный диалог (AlertDialog)** | `MainActivity.kt` | `showAboutDialog()` | Создание `AlertDialog.Builder(this)` с заголовком «О приложении», текстом и кнопкой «Понятно». |
+| **Диалог подтверждения удаления (AlertDialog)** | `ReviewsListFragment.kt` | `confirmDeleteReview(review: Review)` | Диалог `AlertDialog.Builder` с кнопками «Удалить» (удаляет конкретный отзыв из `ReviewRepository`) и «Отмена». |
+| **Диалог выбора из списка (SingleChoice AlertDialog)** | `ReviewsListFragment.kt` | `showSortDialog()`, `showFilterDialog()` | `AlertDialog.Builder` с методом `setSingleChoiceItems()` для сортировки (Новые/Старые/По городу) и фильтрации (Все/Совпало/Не совпало). |
+| **Диалог выбора даты (DatePickerDialog)** | `AddReviewFragment.kt` | `setupDateTimePickers()` | Создание `DatePickerDialog(requireContext(), { _, year, month, day -> ... }, ...).show()`. Месяц корректируется как `month + 1`. |
+| **Диалог выбора времени (TimePickerDialog)** | `AddReviewFragment.kt` | `setupDateTimePickers()` | Создание `TimePickerDialog(requireContext(), { _, hour, minute -> ... }, ...).show()` с форматом `24 часа`. |
+
+---
+
+## 📌 Будущие лабораторные работы (шпаргалка для расширения)
 
 ### Лабораторная работа №11: «Хранение данных: SharedPreferences»
 - **AppPreferences:** Вспомогательный класс для сохранения настроек и сериализованных списков через `getSharedPreferences("weather_prefs", Context.MODE_PRIVATE)`.

@@ -10,7 +10,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -30,12 +29,10 @@ class ForecastFragment : Fragment() {
         }
     }
 
-    private lateinit var tvHeaderCity: TextView
     private lateinit var etDetailCitySearch: EditText
     private lateinit var btnDetailSearch: Button
     private lateinit var layoutHourlyContainer: LinearLayout
     private lateinit var layoutWeeklyContainer: LinearLayout
-    private lateinit var btnBack: ImageButton
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,12 +52,10 @@ class ForecastFragment : Fragment() {
     }
 
     private fun bindViews(view: View) {
-        tvHeaderCity = view.findViewById(R.id.tvHeaderCity)
         etDetailCitySearch = view.findViewById(R.id.etDetailCitySearch)
         btnDetailSearch = view.findViewById(R.id.btnDetailSearch)
         layoutHourlyContainer = view.findViewById(R.id.layoutHourlyContainer)
         layoutWeeklyContainer = view.findViewById(R.id.layoutWeeklyContainer)
-        btnBack = view.findViewById(R.id.btnBack)
     }
 
     private fun readCityArgument() {
@@ -72,9 +67,6 @@ class ForecastFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
         btnDetailSearch.setOnClickListener {
             performSearch()
         }
@@ -109,7 +101,7 @@ class ForecastFragment : Fragment() {
     }
 
     private fun updateCityView(cityName: String) {
-        tvHeaderCity.text = "Прогноз: $cityName"
+        (activity as? MainActivity)?.updateToolbar("Прогноз: $cityName", true)
         etDetailCitySearch.setText(cityName)
     }
 

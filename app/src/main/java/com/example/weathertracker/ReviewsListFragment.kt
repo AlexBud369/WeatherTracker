@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 class ReviewsListFragment : Fragment() {
 
     companion object {
-        fun newInstance(): ReviewsListFragment = ReviewsListFragment()
+        fun newInstance(): ReviewsListFragment {
+            return ReviewsListFragment()
+        }
     }
 
     private lateinit var rvReviews: RecyclerView

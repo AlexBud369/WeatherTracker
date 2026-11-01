@@ -6,35 +6,7 @@
     android:orientation="vertical"
     android:background="#F8FAFC">
 
-    <!-- Top App Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:background="#FFFFFF"
-        android:elevation="3dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Мои отзывы"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#1E293B" />
-
-        <Button
-            android:id="@+id/btnAddNewReview"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="+ Отзыв"
-            android:textSize="12sp"
-            android:backgroundTint="#1E88E5" />
-    </LinearLayout>
-
-    <!-- Панель: Сортировка, Фильтрация, Сброс (в два ряда для идеального размещения текста) -->
+    <!-- Панель: Сортировка, Фильтрация, Добавление, Сброс -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,7 +17,6 @@
         android:background="#FFFFFF"
         android:elevation="1dp">
 
-        <!-- Ряд 1: Кнопки Сортировать и Фильтровать (без иконок, текст полностью помещается) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -72,16 +43,33 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
         </LinearLayout>
 
-        <!-- Ряд 2: Кнопка Сбросить фильтры -->
-        <Button
-            android:id="@+id/btnReset"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Сбросить фильтры"
-            android:textSize="12sp"
-            android:textColor="#64748B"
-            style="@style/Widget.MaterialComponents.Button.TextButton" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnAddNewReview"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="+ Новый отзыв"
+                android:textSize="12sp"
+                android:backgroundTint="#1E88E5" />
+
+            <Button
+                android:id="@+id/btnReset"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:text="Сбросить"
+                android:textSize="12sp"
+                android:textColor="#64748B"
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Индикатор активного фильтра -->
@@ -121,7 +109,7 @@
             android:visibility="gone" />
     </FrameLayout>
 
-    <!-- Пагинация (без лишних стрелочек/иконок) -->
+    <!-- Пагинация -->
     <LinearLayout
         android:id="@+id/layoutPagination"
         android:layout_width="match_parent"

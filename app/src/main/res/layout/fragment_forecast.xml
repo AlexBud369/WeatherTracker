@@ -6,36 +6,6 @@
     android:orientation="vertical"
     android:background="#F8FAFC">
 
-    <!-- Top App Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:background="#FFFFFF"
-        android:elevation="3dp">
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
-            android:contentDescription="Назад" />
-
-        <TextView
-            android:id="@+id/tvHeaderCity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="12dp"
-            android:text="Прогноз: Москва"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#1E293B" />
-    </LinearLayout>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,7 +17,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Поисковая строка для смены города -->
+            <!-- РџРѕРёСЃРєРѕРІР°СЏ СЃС‚СЂРѕРєР° РґР»СЏ СЃРјРµРЅС‹ РіРѕСЂРѕРґР° -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -61,7 +31,7 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_search"
                     app:tint="#64748B"
-                    android:contentDescription="Поиск" />
+                    android:contentDescription="РџРѕРёСЃРє" />
 
                 <EditText
                     android:id="@+id/etDetailCitySearch"
@@ -69,7 +39,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@null"
-                    android:hint="Сменить город..."
+                    android:hint="РЎРјРµРЅРёС‚СЊ РіРѕСЂРѕРґ..."
                     android:imeOptions="actionSearch"
                     android:inputType="textCapWords"
                     android:paddingHorizontal="8dp"
@@ -80,22 +50,22 @@
                     android:id="@+id/btnDetailSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="Найти"
+                    android:text="РќР°Р№С‚Рё"
                     android:textSize="12sp"
                     android:backgroundTint="#1E88E5" />
             </LinearLayout>
 
-            <!-- Заголовок почасового прогноза -->
+            <!-- Р—Р°РіРѕР»РѕРІРѕРє РїРѕС‡Р°СЃРѕРІРѕРіРѕ РїСЂРѕРіРЅРѕР·Р° -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Почасовой прогноз"
+                android:text="РџРѕС‡Р°СЃРѕРІРѕР№ РїСЂРѕРіРЅРѕР·"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#0F172A" />
 
-            <!-- Прокручивающаяся лента с иконками погоды (Horizontal) -->
+            <!-- РџСЂРѕРєСЂСѓС‡РёРІР°СЋС‰Р°СЏСЃСЏ Р»РµРЅС‚Р° СЃ РёРєРѕРЅРєР°РјРё РїРѕРіРѕРґС‹ (Horizontal) -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,18 +79,18 @@
                     android:orientation="horizontal" />
             </HorizontalScrollView>
 
-            <!-- Заголовок прогноза на неделю -->
+            <!-- Р—Р°РіРѕР»РѕРІРѕРє РїСЂРѕРіРЅРѕР·Р° РЅР° РЅРµРґРµР»СЋ -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="8dp"
-                android:text="Прогноз на 7 дней"
+                android:text="РџСЂРѕРіРЅРѕР· РЅР° 7 РґРЅРµР№"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#0F172A" />
 
-            <!-- Вертикальные блоки прогноза на неделю -->
+            <!-- Р’РµСЂС‚РёРєР°Р»СЊРЅС‹Рµ Р±Р»РѕРєРё РїСЂРѕРіРЅРѕР·Р° РЅР° РЅРµРґРµР»СЋ -->
             <LinearLayout
                 android:id="@+id/layoutWeeklyContainer"
                 android:layout_width="match_parent"

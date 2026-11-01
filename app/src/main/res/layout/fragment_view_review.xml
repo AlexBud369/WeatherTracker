@@ -6,35 +6,6 @@
     android:orientation="vertical"
     android:background="#F8FAFC">
 
-    <!-- Top App Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:background="#FFFFFF"
-        android:elevation="3dp">
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
-            android:contentDescription="Назад" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="12dp"
-            android:text="Просмотр отзыва"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#1E293B" />
-    </LinearLayout>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -46,7 +17,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Карточка отзыва -->
+            <!-- РљР°СЂС‚РѕС‡РєР° РѕС‚Р·С‹РІР° -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,17 +33,17 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- Заголовок отзыва -->
+                    <!-- Р—Р°РіРѕР»РѕРІРѕРє РѕС‚Р·С‹РІР° -->
                     <TextView
                         android:id="@+id/tvReviewTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Точный прогноз на выходные"
+                        android:text="РўРѕС‡РЅС‹Р№ РїСЂРѕРіРЅРѕР· РЅР° РІС‹С…РѕРґРЅС‹Рµ"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="#0F172A" />
 
-                    <!-- Статус совпадения (бейдж) -->
+                    <!-- РЎС‚Р°С‚СѓСЃ СЃРѕРІРїР°РґРµРЅРёСЏ (Р±РµР№РґР¶) -->
                     <TextView
                         android:id="@+id/tvReviewStatus"
                         android:layout_width="wrap_content"
@@ -81,12 +52,12 @@
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="4dp"
                         android:background="@drawable/bg_badge_matched"
-                        android:text="Совпало"
+                        android:text="РЎРѕРІРїР°Р»Рѕ"
                         android:textColor="#2E7D32"
                         android:textStyle="bold"
                         android:textSize="13sp" />
 
-                    <!-- Город -->
+                    <!-- Р“РѕСЂРѕРґ -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -98,13 +69,13 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_location"
-                            android:contentDescription="Город" />
+                            android:contentDescription="Р“РѕСЂРѕРґ" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="Город: "
+                            android:text="Р“РѕСЂРѕРґ: "
                             android:textColor="#64748B"
                             android:textSize="14sp" />
 
@@ -112,13 +83,13 @@
                             android:id="@+id/tvReviewCity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Москва"
+                            android:text="РњРѕСЃРєРІР°"
                             android:textColor="#0F172A"
                             android:textStyle="bold"
                             android:textSize="15sp" />
                     </LinearLayout>
 
-                    <!-- Дата и время -->
+                    <!-- Р”Р°С‚Р° Рё РІСЂРµРјСЏ -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -131,13 +102,13 @@
                             android:layout_height="20dp"
                             android:src="@drawable/ic_calendar"
                             app:tint="#64748B"
-                            android:contentDescription="Дата" />
+                            android:contentDescription="Р”Р°С‚Р°" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="Дата и время: "
+                            android:text="Р”Р°С‚Р° Рё РІСЂРµРјСЏ: "
                             android:textColor="#64748B"
                             android:textSize="14sp" />
 
@@ -157,11 +128,11 @@
                         android:layout_marginVertical="16dp"
                         android:background="#E2E8F0" />
 
-                    <!-- Комментарий -->
+                    <!-- РљРѕРјРјРµРЅС‚Р°СЂРёР№ -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Текстовый комментарий:"
+                        android:text="РўРµРєСЃС‚РѕРІС‹Р№ РєРѕРјРјРµРЅС‚Р°СЂРёР№:"
                         android:textColor="#64748B"
                         android:textSize="13sp" />
 
@@ -171,20 +142,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:lineSpacingExtra="4dp"
-                        android:text="Прогноз был абсолютно точным..."
+                        android:text="РџСЂРѕРіРЅРѕР· Р±С‹Р» Р°Р±СЃРѕР»СЋС‚РЅРѕ С‚РѕС‡РЅС‹Рј..."
                         android:textColor="#334155"
                         android:textSize="15sp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Кнопки действий -->
+            <!-- РљРЅРѕРїРєРё РґРµР№СЃС‚РІРёР№ -->
             <Button
                 android:id="@+id/btnEditReview"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="20dp"
-                android:text="Редактировать отзыв"
+                android:text="Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РѕС‚Р·С‹РІ"
                 android:textSize="14sp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:icon="@drawable/ic_edit"
@@ -195,7 +166,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
-                android:text="Вернуться назад"
+                android:text="Р’РµСЂРЅСѓС‚СЊСЃСЏ РЅР°Р·Р°Рґ"
                 android:textSize="14sp"
                 android:backgroundTint="#1E88E5" />
 

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 
@@ -42,7 +41,6 @@ class ViewReviewFragment : Fragment() {
     private lateinit var tvReviewComment: TextView
     private lateinit var btnEditReview: Button
     private lateinit var btnBackToList: Button
-    private lateinit var btnBack: ImageButton
 
     private var currentReview: Review? = null
 
@@ -70,7 +68,6 @@ class ViewReviewFragment : Fragment() {
         tvReviewComment = view.findViewById(R.id.tvReviewComment)
         btnEditReview = view.findViewById(R.id.btnEditReview)
         btnBackToList = view.findViewById(R.id.btnBackToList)
-        btnBack = view.findViewById(R.id.btnBack)
     }
 
     private fun loadReviewFromArguments() {
@@ -118,9 +115,6 @@ class ViewReviewFragment : Fragment() {
             }
         }
         btnBackToList.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-        btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
     }

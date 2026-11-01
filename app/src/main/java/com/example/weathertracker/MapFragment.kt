@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -25,10 +24,8 @@ class MapFragment : Fragment() {
         }
     }
 
-    private lateinit var tvMapHeader: TextView
     private lateinit var tvMapPinCity: TextView
     private lateinit var btnCloseMap: Button
-    private lateinit var btnBackFromMap: ImageButton
     private lateinit var btnZoomIn: FloatingActionButton
     private lateinit var btnZoomOut: FloatingActionButton
 
@@ -51,22 +48,19 @@ class MapFragment : Fragment() {
     }
 
     private fun bindViews(view: View) {
-        tvMapHeader = view.findViewById(R.id.tvMapHeader)
         tvMapPinCity = view.findViewById(R.id.tvMapPinCity)
         btnCloseMap = view.findViewById(R.id.btnCloseMap)
-        btnBackFromMap = view.findViewById(R.id.btnBackFromMap)
         btnZoomIn = view.findViewById(R.id.btnZoomIn)
         btnZoomOut = view.findViewById(R.id.btnZoomOut)
     }
 
     private fun loadCity() {
         currentCity = arguments?.getString(ARG_CITY)?.takeIf { it.isNotBlank() } ?: WeatherAppState.currentCity
-        tvMapHeader.text = "Интерактивная карта: $currentCity"
+        (activity as? MainActivity)?.updateToolbar("Карта: $currentCity", true)
         updatePinText()
     }
 
     private fun setupButtons() {
-        btnBackFromMap.setOnClickListener { parentFragmentManager.popBackStack() }
         btnCloseMap.setOnClickListener { parentFragmentManager.popBackStack() }
         btnZoomIn.setOnClickListener { zoomIn() }
         btnZoomOut.setOnClickListener { zoomOut() }
