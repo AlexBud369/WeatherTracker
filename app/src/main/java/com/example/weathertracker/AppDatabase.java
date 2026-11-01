@@ -28,6 +28,7 @@ public abstract class AppDatabase extends RoomDatabase {
             context.getApplicationContext(),
             AppDatabase.class,
             "weather_tracker.db"
-        ).build();
+        ).fallbackToDestructiveMigration()
+        .build();
     }
 }
