@@ -63,9 +63,26 @@
 
 ---
 
+## 📌 Лабораторная работа №11: «Хранение данных: SharedPreferences» (ветка `lab11`)
+
+| Требование / Тема работы | Файл | Класс / Функция / Разметка | Пояснение, что показать преподавателю |
+|---|---|---|---|
+| **Подключение библиотеки Gson** | `build.gradle.kts` | `dependencies { implementation("com.google.code.gson:gson:2.11.0") }` | Библиотека Gson для сериализации списков объектов в формат JSON и обратно. |
+| **Инициализация SharedPreferences** | `AppPreferences.kt` | `init(context: Context)` | Создание экземпляра через `context.applicationContext.getSharedPreferences("weather_tracker_prefs", Context.MODE_PRIVATE)`. |
+| **Вызов инициализации в точке входа** | `MainActivity.kt` | `onCreate()` | Строки `AppPreferences.init(this)` и `WeatherAppState.currentCity = AppPreferences.getLastCity()`. |
+| **Сохранение примитивных типов (`apply()`)** | `AppPreferences.kt` | `saveLastCity()`, `saveDarkTheme()`, `saveNotifications()`, `saveLanguageIndex()` | Использование `preferences.edit().putString(...).apply()`, `putBoolean(...)`, `putInt(...)`. |
+| **Чтение примитивных типов** | `AppPreferences.kt` | `getLastCity()`, `isDarkTheme()`, `isNotificationsEnabled()`, `getLanguageIndex()` | Использование `preferences.getString(...)`, `getBoolean(...)`, `getInt(...)` со значениями по умолчанию. |
+| **Сериализация коллекции в JSON (Gson.toJson)** | `AppPreferences.kt` | `saveReviews(reviews: List<Review>)` | Превращение списка `List<Review>` в JSON-строку: `val jsonString = gson.toJson(reviews)` и сохранение в преференсы. |
+| **Десериализация коллекции из JSON (TypeToken)** | `AppPreferences.kt` | `getReviews(): List<Review>` | Извлечение JSON-строки и десериализация через `object : TypeToken<List<Review>>() {}.type` и `gson.fromJson(...)`. |
+| **Интеграция сохранения в репозиторий** | `ReviewRepository.kt` | `addReview()`, `removeReview()`, `updateReview()`, `ensureInitialized()` | Любое добавление, редактирование или удаление отзыва автоматически вызывает `persistReviews()` и сохраняется в SharedPreferences. |
+| **Автоматическое сохранение выбранного города** | `WeatherAppState.kt` | Сеттер свойства `currentCity` | При вводе города в поиске срабатывает сеттер `set(value)`, который автоматически сохраняет город в `AppPreferences`. |
+| **Сохранение настроек интерфейса** | `SettingsFragment.kt` | `saveCurrentPreferences()`, `loadSavedPreferences()` | Экран настроек загружает сохраненные параметры при открытии и сохраняет при изменении/нажатии «Сохранить». |
+
+---
+
 ## 📌 Будущие лабораторные работы (шпаргалка для расширения)
 
-### Лабораторная работа №11: «Хранение данных: SharedPreferences»
-- **AppPreferences:** Вспомогательный класс для сохранения настроек и сериализованных списков через `getSharedPreferences("weather_prefs", Context.MODE_PRIVATE)`.
-- **Сохранение примитивов:** `prefs.edit().putString(...).apply()`.
-- **Сохранение коллекций (Gson):** Сериализация `List<Review>` в JSON-строку и десериализация при старте приложения.
+### Лабораторная работа №12: «Локальные базы данных: Room»
+- **Entity:** Описание сущности таблицы `@Entity(tableName = "reviews") class ReviewEntity(...)`.
+- **DAO:** Интерфейс доступа к данным `@Dao` с методами `@Insert`, `@Update`, `@Delete`, `@Query`.
+- **RoomDatabase:** Абстрактный класс БД `@Database(entities = [ReviewEntity::class], version = 1)`.

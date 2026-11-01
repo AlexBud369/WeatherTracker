@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.TextView
@@ -16,15 +17,17 @@ import androidx.fragment.app.Fragment
 class SettingsFragment : Fragment() {
 
     companion object {
-        fun newInstance(): SettingsFragment = SettingsFragment()
+        fun newInstance(): SettingsFragment {
+            return SettingsFragment()
+        }
     }
 
     private lateinit var spinnerLanguage: Spinner
     private lateinit var switchTheme: SwitchCompat
     private lateinit var tvThemeSubtitle: TextView
     private lateinit var rgTemperature: RadioGroup
-    private lateinit var rgWind: RadioGroup
-    private lateinit var rgPressure: RadioGroup
+    private lateinit var rbCelsius: RadioButton
+    private lateinit var rbFahrenheit: RadioButton
     private lateinit var switchNotifications: SwitchCompat
     private lateinit var tvNotificationStatus: TextView
     private lateinit var btnSaveSettings: Button
@@ -41,8 +44,8 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         bindViews(view)
         setupLanguageSpinner()
-        setupThemeSwitch()
-        setupNotificationsSwitch()
+        loadSavedPreferences()
+        setupListeners()
         setupSaveButton()
     }
 
@@ -51,8 +54,8 @@ class SettingsFragment : Fragment() {
         switchTheme = view.findViewById(R.id.switchTheme)
         tvThemeSubtitle = view.findViewById(R.id.tvThemeSubtitle)
         rgTemperature = view.findViewById(R.id.rgTemperature)
-        rgWind = view.findViewById(R.id.rgWind)
-        rgPressure = view.findViewById(R.id.rgPressure)
+        rbCelsius = view.findViewById(R.id.rbCelsius)
+        rbFahrenheit = view.findViewById(R.id.rbFahrenheit)
         switchNotifications = view.findViewById(R.id.switchNotifications)
         tvNotificationStatus = view.findViewById(R.id.tvNotificationStatus)
         btnSaveSettings = view.findViewById(R.id.btnSaveSettings)
@@ -65,21 +68,48 @@ class SettingsFragment : Fragment() {
         spinnerLanguage.adapter = langAdapter
     }
 
-    private fun setupThemeSwitch() {
-        switchTheme.setOnCheckedChangeListener { _, isChecked ->
-            tvThemeSubtitle.text = if (isChecked) "Тёмная тема (активна)" else "Светлая тема (активна)"
+    private fun loadSavedPreferences() {
+        switchTheme.isChecked = AppPreferences.isDarkTheme()
+        updateThemeSubtitle(switchTheme.isChecked)
+        switchNotifications.isChecked = AppPreferences.isNotificationsEnabled()
+        updateNotificationSubtitle(switchNotifications.isChecked)
+        spinnerLanguage.setSelection(AppPreferences.getLanguageIndex())
+        if (AppPreferences.getTemperatureUnit() == "°F") {
+            rbFahrenheit.isChecked = true
+        } else {
+            rbCelsius.isChecked = true
         }
     }
 
-    private fun setupNotificationsSwitch() {
-        switchNotifications.setOnCheckedChangeListener { _, isChecked ->
-            tvNotificationStatus.text = if (isChecked) "Уведомления включены" else "Уведомления выключены"
+    private fun setupListeners() {
+        switchTheme.setOnCheckedChangeListener { _, isChecked ->
+            updateThemeSubtitle(isChecked)
         }
+        switchNotifications.setOnCheckedChangeListener { _, isChecked ->
+            updateNotificationSubtitle(isChecked)
+        }
+    }
+
+    private fun updateThemeSubtitle(isChecked: Boolean) {
+        tvThemeSubtitle.text = if (isChecked) "Тёмная тема (активна)" else "Светлая тема (активна)"
+    }
+
+    private fun updateNotificationSubtitle(isChecked: Boolean) {
+        tvNotificationStatus.text = if (isChecked) "Уведомления включены" else "Уведомления выключены"
     }
 
     private fun setupSaveButton() {
         btnSaveSettings.setOnClickListener {
-            Toast.makeText(requireContext(), "Настройки сохранены", Toast.LENGTH_SHORT).show()
+            saveCurrentPreferences()
+            Toast.makeText(requireContext(), "Настройки сохранены в SharedPreferences", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun saveCurrentPreferences() {
+        AppPreferences.saveDarkTheme(switchTheme.isChecked)
+        AppPreferences.saveNotifications(switchNotifications.isChecked)
+        AppPreferences.saveLanguageIndex(spinnerLanguage.selectedItemPosition)
+        val tempUnit = if (rbFahrenheit.isChecked) "°F" else "°C"
+        AppPreferences.saveTemperatureUnit(tempUnit)
     }
 }
