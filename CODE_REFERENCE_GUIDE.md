@@ -80,9 +80,26 @@
 
 ---
 
+## 📌 Лабораторная работа №12: «Работа с базой данных Room» (ветка `lab12`)
+
+| Требование / Тема работы | Файл | Класс / Функция / Разметка | Пояснение, что показать преподавателю |
+|---|---|---|---|
+| **Подключение зависимостей Room** | `build.gradle.kts` | `dependencies { implementation("androidx.room:room-runtime:2.6.1") ... }` | Подключение библиотек Room Runtime, Room KTX и процессора аннотаций Room Compiler. |
+| **Сущность базы данных (Entity)** | `Review.kt` | `@Entity(tableName = "reviews") data class Review` | Класс сущности с полями таблицы. Первичный ключ `@PrimaryKey(autoGenerate = true) val id: Long = 0L`. |
+| **Интерфейс доступа к данным (DAO)** | `ReviewDao.kt` | `@Dao interface ReviewDao` | Интерфейс с CRUD-методами: `@Query`, `@Insert`, `@Update`, `@Delete`. |
+| **Реактивный поток данных (Flow)** | `ReviewDao.kt`, `ReviewsListFragment.kt` | `fun getAllReviews(): Flow<List<Review>>`, `observeReviewsFromDatabase()` | Использование `Flow` от Room: UI автоматически перерисовывается при любых изменениях в БД через `Flow.collect`. |
+| **Асинхронные suspend-функции** | `ReviewDao.kt` | `suspend fun insertReview(...)`, `suspend fun deleteReview(...)` | Все операции записи и чтения помечены `suspend` и выполняются вне главного потока через корутины. |
+| **Класс базы данных (RoomDatabase)** | `AppDatabase.kt` | `@Database(entities = [Review::class], version = 1) abstract class AppDatabase` | Наследник `RoomDatabase` с абстрактным методом `reviewDao()` и потокобезопасным синглтоном `getDatabase()`. |
+| **Инициализация базы данных** | `MainActivity.kt` | `onCreate()` | Вызов `ReviewRepository.init(this)`, создающий экземпляр `AppDatabase` через `Room.databaseBuilder`. |
+| **Изоляция работы с БД в репозитории** | `ReviewRepository.kt` | `addReview()`, `removeReview()`, `updateReview()`, `getReviews()` | Репозиторий перенаправляет вызовы в `ReviewDao` в контексте `Dispatchers.IO`. |
+| **Асинхронное сохранение из Fragment** | `AddReviewFragment.kt` | `saveReview()` | Запуск корутины `viewLifecycleOwner.lifecycleScope.launch` для асинхронного сохранения отзыва в Room перед закрытием экрана. |
+| **Асинхронное удаление из Fragment** | `ReviewsListFragment.kt` | `deleteReviewFromDatabase()` | Удаление записи из Room в корутине `lifecycleScope.launch` с мгновенным реактивным обновлением UI. |
+
+---
+
 ## 📌 Будущие лабораторные работы (шпаргалка для расширения)
 
-### Лабораторная работа №12: «Локальные базы данных: Room»
-- **Entity:** Описание сущности таблицы `@Entity(tableName = "reviews") class ReviewEntity(...)`.
-- **DAO:** Интерфейс доступа к данным `@Dao` с методами `@Insert`, `@Update`, `@Delete`, `@Query`.
-- **RoomDatabase:** Абстрактный класс БД `@Database(entities = [ReviewEntity::class], version = 1)`.
+### Лабораторная работа №13: «Работа с сетью и API: Retrofit»
+- **Интерфейс API:** Описание эндпоинтов `@GET`, `@POST` с аннотациями Retrofit.
+- **Модели данных (DTO):** Data-классы для парсинга ответов серверов погоды (OpenWeatherMap, WeatherAPI).
+- **Retrofit Client:** Конфигурация `Retrofit.Builder().baseUrl(...).addConverterFactory(GsonConverterFactory.create()).build()`.

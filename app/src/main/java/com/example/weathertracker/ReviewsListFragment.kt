@@ -9,8 +9,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 
 class ReviewsListFragment : Fragment() {
 
@@ -52,7 +56,7 @@ class ReviewsListFragment : Fragment() {
         setupRecyclerView()
         setupResultListener()
         setupActionButtons()
-        refreshReviewsList()
+        observeReviewsFromDatabase()
     }
 
     private fun bindViews(view: View) {
@@ -87,17 +91,33 @@ class ReviewsListFragment : Fragment() {
         rvReviews.adapter = adapter
     }
 
+    private fun observeReviewsFromDatabase() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                ReviewRepository.getReviewsFlow().collect { reviewsList ->
+                    allReviews = reviewsList.toMutableList()
+                    applyFilterAndSort()
+                }
+            }
+        }
+    }
+
     private fun confirmDeleteReview(review: Review) {
         AlertDialog.Builder(requireContext())
             .setTitle("Удаление отзыва")
             .setMessage("Вы уверены, что хотите удалить этот отзыв по городу ${review.city}?")
             .setPositiveButton("Удалить") { _, _ ->
-                ReviewRepository.removeReview(review)
-                Toast.makeText(requireContext(), "Отзыв удален", Toast.LENGTH_SHORT).show()
-                refreshReviewsList()
+                deleteReviewFromDatabase(review)
             }
             .setNegativeButton("Отмена", null)
             .show()
+    }
+
+    private fun deleteReviewFromDatabase(review: Review) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            ReviewRepository.removeReview(review)
+            Toast.makeText(requireContext(), "Отзыв удален из базы данных Room", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setupResultListener() {
@@ -111,15 +131,9 @@ class ReviewsListFragment : Fragment() {
             val addFragment = AddReviewFragment.newInstance()
             (activity as? MainActivity)?.openFragment(addFragment, addToBackStack = true)
         }
-        btnSort.setOnClickListener {
-            showSortDialog()
-        }
-        btnFilter.setOnClickListener {
-            showFilterDialog()
-        }
-        btnReset.setOnClickListener {
-            resetFilters()
-        }
+        btnSort.setOnClickListener { showSortDialog() }
+        btnFilter.setOnClickListener { showFilterDialog() }
+        btnReset.setOnClickListener { resetFilters() }
         btnPrevPage.setOnClickListener { }
         btnNextPage.setOnClickListener { }
     }
@@ -161,8 +175,10 @@ class ReviewsListFragment : Fragment() {
     }
 
     private fun refreshReviewsList() {
-        allReviews = ReviewRepository.getReviews()
-        applyFilterAndSort()
+        viewLifecycleOwner.lifecycleScope.launch {
+            allReviews = ReviewRepository.getReviews().toMutableList()
+            applyFilterAndSort()
+        }
     }
 
     private fun applyFilterAndSort() {

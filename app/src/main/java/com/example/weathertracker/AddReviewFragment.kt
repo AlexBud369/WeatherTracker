@@ -13,6 +13,8 @@ import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Locale
 
@@ -170,8 +172,6 @@ class AddReviewFragment : Fragment() {
 
         val fullDate = "$selectedDate $selectedTime"
         saveReview(title, city, fullDate, status, comment)
-        sendFragmentResult(title, city, status, comment)
-        parentFragmentManager.popBackStack()
     }
 
     private fun validateInputs(title: String, city: String, comment: String): Boolean {
@@ -191,14 +191,18 @@ class AddReviewFragment : Fragment() {
     }
 
     private fun saveReview(title: String, city: String, fullDate: String, status: String, comment: String) {
-        if (editingReview != null) {
-            updateExistingReview(title, city, fullDate, status, comment)
-        } else {
-            createNewReview(title, city, fullDate, status, comment)
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (editingReview != null) {
+                updateExistingReview(title, city, fullDate, status, comment)
+            } else {
+                createNewReview(title, city, fullDate, status, comment)
+            }
+            sendFragmentResult(title, city, status, comment)
+            parentFragmentManager.popBackStack()
         }
     }
 
-    private fun updateExistingReview(title: String, city: String, fullDate: String, status: String, comment: String) {
+    private suspend fun updateExistingReview(title: String, city: String, fullDate: String, status: String, comment: String) {
         val updated = editingReview!!.copy(
             title = title,
             city = city,
@@ -209,7 +213,7 @@ class AddReviewFragment : Fragment() {
         ReviewRepository.updateReview(updated)
     }
 
-    private fun createNewReview(title: String, city: String, fullDate: String, status: String, comment: String) {
+    private suspend fun createNewReview(title: String, city: String, fullDate: String, status: String, comment: String) {
         val newReview = Review(
             title = title,
             city = city,

@@ -1,55 +1,50 @@
 package com.example.weathertracker
 
+import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 object ReviewRepository {
 
-    private val reviews = mutableListOf<Review>()
-    private var isInitialized = false
+    private lateinit var database: AppDatabase
+    private val repositoryScope = CoroutineScope(Dispatchers.IO)
 
-    fun getReviews(): MutableList<Review> {
-        ensureInitialized()
-        return reviews.toMutableList()
-    }
-
-    fun addReview(review: Review) {
-        ensureInitialized()
-        reviews.add(0, review)
-        persistReviews()
-    }
-
-    fun removeReview(review: Review) {
-        ensureInitialized()
-        val index = reviews.indexOfFirst { it.id == review.id }
-        if (index != -1) {
-            reviews.removeAt(index)
-            persistReviews()
+    fun init(context: Context) {
+        database = AppDatabase.getDatabase(context)
+        repositoryScope.launch {
+            populateInitialReviewsIfEmpty()
         }
     }
 
-    fun updateReview(updatedReview: Review) {
-        ensureInitialized()
-        val index = reviews.indexOfFirst { it.id == updatedReview.id }
-        if (index != -1) {
-            reviews[index] = updatedReview
-            persistReviews()
-        }
+    fun getReviewsFlow(): Flow<List<Review>> {
+        return database.reviewDao().getAllReviews()
     }
 
-    private fun ensureInitialized() {
-        if (isInitialized) return
-        val savedReviews = AppPreferences.getReviews()
-        if (savedReviews.isNotEmpty()) {
-            reviews.clear()
-            reviews.addAll(savedReviews)
-        } else {
-            reviews.clear()
-            reviews.addAll(createInitialReviews())
-            persistReviews()
-        }
-        isInitialized = true
+    suspend fun getReviews(): List<Review> = withContext(Dispatchers.IO) {
+        database.reviewDao().getAllReviewsList()
     }
 
-    private fun persistReviews() {
-        AppPreferences.saveReviews(reviews)
+    suspend fun addReview(review: Review) = withContext(Dispatchers.IO) {
+        database.reviewDao().insertReview(review)
+    }
+
+    suspend fun removeReview(review: Review) = withContext(Dispatchers.IO) {
+        database.reviewDao().deleteReview(review)
+    }
+
+    suspend fun updateReview(updatedReview: Review) = withContext(Dispatchers.IO) {
+        database.reviewDao().updateReview(updatedReview)
+    }
+
+    private suspend fun populateInitialReviewsIfEmpty() {
+        val existing = database.reviewDao().getAllReviewsList()
+        if (existing.isEmpty()) {
+            val initialList = createInitialReviews()
+            database.reviewDao().insertAll(initialList)
+        }
     }
 
     private fun createInitialReviews(): List<Review> {
@@ -59,7 +54,6 @@ object ReviewRepository {
     private fun createWesternReviews(): List<Review> {
         return listOf(
             Review(
-                id = 1L,
                 city = "Москва",
                 date = "30.10.2026 10:45",
                 status = "Совпало",
@@ -67,7 +61,6 @@ object ReviewRepository {
                 title = "Точный прогноз на выходные"
             ),
             Review(
-                id = 2L,
                 city = "Санкт-Петербург",
                 date = "29.10.2026 15:30",
                 status = "Не совпало",
@@ -80,7 +73,6 @@ object ReviewRepository {
     private fun createEasternReviews(): List<Review> {
         return listOf(
             Review(
-                id = 3L,
                 city = "Казань",
                 date = "28.10.2026 18:00",
                 status = "Совпало",
@@ -88,7 +80,6 @@ object ReviewRepository {
                 title = "Ветрено в Казани"
             ),
             Review(
-                id = 4L,
                 city = "Новосибирск",
                 date = "27.10.2026 08:00",
                 status = "Совпало",

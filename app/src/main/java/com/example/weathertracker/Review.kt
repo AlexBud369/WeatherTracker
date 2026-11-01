@@ -1,17 +1,16 @@
 package com.example.weathertracker
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.io.Serializable
-import java.util.concurrent.atomic.AtomicLong
 
+@Entity(tableName = "reviews")
 data class Review(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0L,
     val city: String,
     val date: String,
     val status: String,
     val comment: String,
-    val title: String = "Отзыв о погоде",
-    val id: Long = idGenerator.incrementAndGet()
-) : Serializable {
-    companion object {
-        private val idGenerator = AtomicLong(1000L)
-    }
-}
+    val title: String = "Отзыв о погоде"
+) : Serializable
