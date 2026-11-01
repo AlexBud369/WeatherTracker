@@ -34,7 +34,7 @@ class ReviewsListFragment : Fragment() {
     private var displayedReviews = mutableListOf<Review>()
 
     private var filterMode: String = "Все"
-    private var sortMode: Int = 0 // 0: Новые, 1: Старые, 2: По городу
+    private var sortMode: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +46,14 @@ class ReviewsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bindViews(view)
+        setupRecyclerView()
+        setupResultListener()
+        setupActionButtons()
+        refreshReviewsList()
+    }
 
+    private fun bindViews(view: View) {
         rvReviews = view.findViewById(R.id.rvReviews)
         tvEmptyReviews = view.findViewById(R.id.tvEmptyReviews)
         btnAddNewReview = view.findViewById(R.id.btnAddNewReview)
@@ -57,7 +64,9 @@ class ReviewsListFragment : Fragment() {
         tvPaginationInfo = view.findViewById(R.id.tvPaginationInfo)
         btnPrevPage = view.findViewById(R.id.btnPrevPage)
         btnNextPage = view.findViewById(R.id.btnNextPage)
+    }
 
+    private fun setupRecyclerView() {
         adapter = ReviewCardAdapter(
             reviews = displayedReviews,
             onItemClick = { review ->
@@ -69,83 +78,79 @@ class ReviewsListFragment : Fragment() {
                 (activity as? MainActivity)?.openFragment(editFragment, addToBackStack = true)
             },
             onDeleteClick = { review ->
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Удаление отзыва")
-                    .setMessage("Вы уверены, что хотите удалить этот отзыв по городу ${review.city}?")
-                    .setPositiveButton("Удалить") { _, _ ->
-                        ReviewRepository.removeReview(review)
-                        Toast.makeText(requireContext(), "Отзыв удален", Toast.LENGTH_SHORT).show()
-                        refreshReviewsList()
-                    }
-                    .setNegativeButton("Отмена", null)
-                    .show()
+                confirmDeleteReview(review)
             }
         )
-
         rvReviews.layoutManager = LinearLayoutManager(requireContext())
         rvReviews.adapter = adapter
+    }
 
-        // Слушатель результатов из экрана добавления/редактирования отзыва (Fragment Result API)
-        parentFragmentManager.setFragmentResultListener(
-            "review_added",
-            viewLifecycleOwner
-        ) { _, _ ->
+    private fun confirmDeleteReview(review: Review) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Удаление отзыва")
+            .setMessage("Вы уверены, что хотите удалить этот отзыв по городу ${review.city}?")
+            .setPositiveButton("Удалить") { _, _ ->
+                ReviewRepository.removeReview(review)
+                Toast.makeText(requireContext(), "Отзыв удален", Toast.LENGTH_SHORT).show()
+                refreshReviewsList()
+            }
+            .setNegativeButton("Отмена", null)
+            .show()
+    }
+
+    private fun setupResultListener() {
+        parentFragmentManager.setFragmentResultListener("review_added", viewLifecycleOwner) { _, _ ->
             refreshReviewsList()
         }
+    }
 
-        // Переход к экрану создания нового отзыва
+    private fun setupActionButtons() {
         btnAddNewReview.setOnClickListener {
             val addFragment = AddReviewFragment.newInstance()
             (activity as? MainActivity)?.openFragment(addFragment, addToBackStack = true)
         }
-
-        // Кнопка Сортировки
         btnSort.setOnClickListener {
-            val sortOptions = arrayOf("Сначала новые", "Сначала старые", "По названию города (А-Я)")
-            AlertDialog.Builder(requireContext())
-                .setTitle("Сортировка отзывов")
-                .setSingleChoiceItems(sortOptions, sortMode) { dialog, which ->
-                    sortMode = which
-                    dialog.dismiss()
-                    applyFilterAndSort()
-                }
-                .show()
+            showSortDialog()
         }
-
-        // Кнопка Фильтрации
         btnFilter.setOnClickListener {
-            val filterOptions = arrayOf("Все отзывы", "Только «Совпало»", "Только «Не совпало»")
-            val currentChecked = when (filterMode) {
-                "Совпало" -> 1
-                "Не совпало" -> 2
-                else -> 0
-            }
-            AlertDialog.Builder(requireContext())
-                .setTitle("Фильтрация по статусу")
-                .setSingleChoiceItems(filterOptions, currentChecked) { dialog, which ->
-                    filterMode = when (which) {
-                        1 -> "Совпало"
-                        2 -> "Не совпало"
-                        else -> "Все"
-                    }
-                    dialog.dismiss()
-                    applyFilterAndSort()
-                }
-                .show()
+            showFilterDialog()
         }
-
-        // Кнопка Сброса фильтров
         btnReset.setOnClickListener {
-            filterMode = "Все"
-            sortMode = 0
-            applyFilterAndSort()
+            resetFilters()
         }
-
-        // Пагинация (на одной странице)
         btnPrevPage.setOnClickListener { }
         btnNextPage.setOnClickListener { }
+    }
 
-        refreshReviewsList()
+    private fun showSortDialog() {
+        val sortOptions = arrayOf("Сначала новые", "Сначала старые", "По названию города (А-Я)")
+        AlertDialog.Builder(requireContext())
+            .setTitle("Сортировка отзывов")
+            .setSingleChoiceItems(sortOptions, sortMode) { dialog, which ->
+                sortMode = which
+                dialog.dismiss()
+                applyFilterAndSort()
+            }
+            .show()
+    }
+
+    private fun showFilterDialog() {
+        val filterOptions = arrayOf("Все отзывы", "Только «Совпало»", "Только «Не совпало»")
+        val currentChecked = if (filterMode == "Совпало") 1 else if (filterMode == "Не совпало") 2 else 0
+        AlertDialog.Builder(requireContext())
+            .setTitle("Фильтрация по статусу")
+            .setSingleChoiceItems(filterOptions, currentChecked) { dialog, which ->
+                filterMode = if (which == 1) "Совпало" else if (which == 2) "Не совпало" else "Все"
+                dialog.dismiss()
+                applyFilterAndSort()
+            }
+            .show()
+    }
+
+    private fun resetFilters() {
+        filterMode = "Все"
+        sortMode = 0
+        applyFilterAndSort()
     }
 
     override fun onResume() {
@@ -159,37 +164,34 @@ class ReviewsListFragment : Fragment() {
     }
 
     private fun applyFilterAndSort() {
-        var resultList = allReviews.toList()
+        val filteredList = filterReviews(allReviews)
+        val sortedList = sortReviews(filteredList)
+        updateListUI(sortedList)
+    }
 
-        // 1. Фильтрация
-        if (filterMode != "Все") {
-            resultList = resultList.filter { it.status.equals(filterMode, ignoreCase = true) }
-        }
-
-        // 2. Сортировка
-        resultList = when (sortMode) {
-            1 -> resultList.reversed() // Старые сначала
-            2 -> resultList.sortedBy { it.city } // По городу
-            else -> resultList // Новые сначала
-        }
-
-        displayedReviews.clear()
-        displayedReviews.addAll(resultList)
-        adapter.updateList(displayedReviews)
-
-        if (displayedReviews.isEmpty()) {
-            tvEmptyReviews.visibility = View.VISIBLE
-            rvReviews.visibility = View.GONE
+    private fun filterReviews(list: List<Review>): List<Review> {
+        return if (filterMode == "Все") {
+            list
         } else {
-            tvEmptyReviews.visibility = View.GONE
-            rvReviews.visibility = View.VISIBLE
+            list.filter { it.status.equals(filterMode, ignoreCase = true) }
         }
+    }
 
-        val sortName = when (sortMode) {
-            1 -> "Старые сначала"
-            2 -> "По городу (А-Я)"
-            else -> "Новые сначала"
+    private fun sortReviews(list: List<Review>): List<Review> {
+        return when (sortMode) {
+            1 -> list.reversed()
+            2 -> list.sortedBy { it.city }
+            else -> list
         }
+    }
+
+    private fun updateListUI(newList: List<Review>) {
+        displayedReviews.clear()
+        displayedReviews.addAll(newList)
+        adapter.updateList(displayedReviews)
+        tvEmptyReviews.visibility = if (displayedReviews.isEmpty()) View.VISIBLE else View.GONE
+        rvReviews.visibility = if (displayedReviews.isEmpty()) View.GONE else View.VISIBLE
+        val sortName = if (sortMode == 1) "Старые сначала" else if (sortMode == 2) "По городу (А-Я)" else "Новые сначала"
         tvFilterStatus.text = "Фильтр: $filterMode | Сортировка: $sortName"
         tvPaginationInfo.text = "Стр. 1 из 1 (Всего: ${displayedReviews.size})"
     }

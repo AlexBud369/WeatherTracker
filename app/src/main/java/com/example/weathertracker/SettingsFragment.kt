@@ -39,7 +39,14 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bindViews(view)
+        setupLanguageSpinner()
+        setupThemeSwitch()
+        setupNotificationsSwitch()
+        setupSaveButton()
+    }
 
+    private fun bindViews(view: View) {
         spinnerLanguage = view.findViewById(R.id.spinnerLanguage)
         switchTheme = view.findViewById(R.id.switchTheme)
         tvThemeSubtitle = view.findViewById(R.id.tvThemeSubtitle)
@@ -49,29 +56,30 @@ class SettingsFragment : Fragment() {
         switchNotifications = view.findViewById(R.id.switchNotifications)
         tvNotificationStatus = view.findViewById(R.id.tvNotificationStatus)
         btnSaveSettings = view.findViewById(R.id.btnSaveSettings)
+    }
 
-        // Подраздел Представление: Выбор языка
+    private fun setupLanguageSpinner() {
         val languages = listOf("Русский", "English", "Deutsch")
         val langAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, languages)
         langAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerLanguage.adapter = langAdapter
+    }
 
-        // Подраздел Представление: Переключатель темы
+    private fun setupThemeSwitch() {
         switchTheme.setOnCheckedChangeListener { _, isChecked ->
             tvThemeSubtitle.text = if (isChecked) "Тёмная тема (активна)" else "Светлая тема (активна)"
         }
+    }
 
-        // Подраздел Уведомления: вкл./выкл.
+    private fun setupNotificationsSwitch() {
         switchNotifications.setOnCheckedChangeListener { _, isChecked ->
             tvNotificationStatus.text = if (isChecked) "Уведомления включены" else "Уведомления выключены"
         }
+    }
 
+    private fun setupSaveButton() {
         btnSaveSettings.setOnClickListener {
-            Toast.makeText(
-                requireContext(),
-                "Настройки сохранены",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "Настройки сохранены", Toast.LENGTH_SHORT).show()
         }
     }
 }

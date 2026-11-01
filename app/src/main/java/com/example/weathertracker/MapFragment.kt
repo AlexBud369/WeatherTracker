@@ -45,38 +45,44 @@ class MapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bindViews(view)
+        loadCity()
+        setupButtons()
+    }
 
+    private fun bindViews(view: View) {
         tvMapHeader = view.findViewById(R.id.tvMapHeader)
         tvMapPinCity = view.findViewById(R.id.tvMapPinCity)
         btnCloseMap = view.findViewById(R.id.btnCloseMap)
         btnBackFromMap = view.findViewById(R.id.btnBackFromMap)
         btnZoomIn = view.findViewById(R.id.btnZoomIn)
         btnZoomOut = view.findViewById(R.id.btnZoomOut)
+    }
 
+    private fun loadCity() {
         currentCity = arguments?.getString(ARG_CITY)?.takeIf { it.isNotBlank() } ?: WeatherAppState.currentCity
         tvMapHeader.text = "Интерактивная карта: $currentCity"
         updatePinText()
+    }
 
-        btnBackFromMap.setOnClickListener {
-            parentFragmentManager.popBackStack()
+    private fun setupButtons() {
+        btnBackFromMap.setOnClickListener { parentFragmentManager.popBackStack() }
+        btnCloseMap.setOnClickListener { parentFragmentManager.popBackStack() }
+        btnZoomIn.setOnClickListener { zoomIn() }
+        btnZoomOut.setOnClickListener { zoomOut() }
+    }
+
+    private fun zoomIn() {
+        if (zoomLevel < 18) {
+            zoomLevel++
+            updatePinText()
         }
+    }
 
-        btnCloseMap.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-
-        btnZoomIn.setOnClickListener {
-            if (zoomLevel < 18) {
-                zoomLevel++
-                updatePinText()
-            }
-        }
-
-        btnZoomOut.setOnClickListener {
-            if (zoomLevel > 3) {
-                zoomLevel--
-                updatePinText()
-            }
+    private fun zoomOut() {
+        if (zoomLevel > 3) {
+            zoomLevel--
+            updatePinText()
         }
     }
 

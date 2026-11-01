@@ -47,44 +47,46 @@ class ForecastFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bindViews(view)
+        readCityArgument()
+        setupListeners()
+        populateHourlyForecast()
+        populateWeeklyForecast()
+    }
 
+    private fun bindViews(view: View) {
         tvHeaderCity = view.findViewById(R.id.tvHeaderCity)
         etDetailCitySearch = view.findViewById(R.id.etDetailCitySearch)
         btnDetailSearch = view.findViewById(R.id.btnDetailSearch)
         layoutHourlyContainer = view.findViewById(R.id.layoutHourlyContainer)
         layoutWeeklyContainer = view.findViewById(R.id.layoutWeeklyContainer)
         btnBack = view.findViewById(R.id.btnBack)
+    }
 
+    private fun readCityArgument() {
         val passedCity = arguments?.getString(ARG_CITY)?.takeIf { it.isNotBlank() }
         if (passedCity != null) {
             WeatherAppState.currentCity = passedCity
         }
         updateCityView(WeatherAppState.currentCity)
+    }
 
-        // Возврат назад по стеку фрагментов (BackStack, Шаг 4 Лаб 9)
+    private fun setupListeners() {
         btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
-
         btnDetailSearch.setOnClickListener {
             performSearch()
         }
-
-        // Поиск города при нажатии на клавиатуре телефона (Enter / Поиск)
         etDetailCitySearch.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                actionId == EditorInfo.IME_ACTION_DONE ||
-                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
-            ) {
+            val isEnterKey = event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE || isEnterKey) {
                 performSearch()
                 true
             } else {
                 false
             }
         }
-
-        populateHourlyForecast()
-        populateWeeklyForecast()
     }
 
     override fun onResume() {
@@ -114,8 +116,17 @@ class ForecastFragment : Fragment() {
     private fun populateHourlyForecast() {
         layoutHourlyContainer.removeAllViews()
         val inflater = LayoutInflater.from(requireContext())
+        for (item in getHourlyData()) {
+            val itemView = inflater.inflate(R.layout.item_hourly_weather, layoutHourlyContainer, false)
+            itemView.findViewById<TextView>(R.id.tvHourlyTime).text = item.first
+            itemView.findViewById<TextView>(R.id.tvHourlyIcon).text = item.second
+            itemView.findViewById<TextView>(R.id.tvHourlyTemp).text = item.third
+            layoutHourlyContainer.addView(itemView)
+        }
+    }
 
-        val hourlyList = listOf(
+    private fun getHourlyData(): List<Triple<String, String, String>> {
+        return listOf(
             Triple("10:00", "☀️", "+18°"),
             Triple("12:00", "☀️", "+19°"),
             Triple("14:00", "⛅", "+20°"),
@@ -128,48 +139,29 @@ class ForecastFragment : Fragment() {
             Triple("06:00", "⛅", "+11°"),
             Triple("08:00", "☀️", "+15°")
         )
-
-        for (item in hourlyList) {
-            val itemView = inflater.inflate(R.layout.item_hourly_weather, layoutHourlyContainer, false)
-            itemView.findViewById<TextView>(R.id.tvHourlyTime).text = item.first
-            itemView.findViewById<TextView>(R.id.tvHourlyIcon).text = item.second
-            itemView.findViewById<TextView>(R.id.tvHourlyTemp).text = item.third
-            layoutHourlyContainer.addView(itemView)
-        }
     }
 
     private fun populateWeeklyForecast() {
         layoutWeeklyContainer.removeAllViews()
         val inflater = LayoutInflater.from(requireContext())
-
-        data class DayForecast(
-            val date: String,
-            val temp: String,
-            val precipitation: String,
-            val wind: String,
-            val humidity: String,
-            val pressure: String
-        )
-
-        val days = listOf(
-            DayForecast("Сегодня, 30 октября", "+18° / +9°", "Осадки: Без осадков ☀️", "💨 3.8 м/с", "💧 58%", "⏱ 754 мм"),
-            DayForecast("Суббота, 31 октября", "+16° / +8°", "Осадки: Переменная облачность ⛅", "💨 4.2 м/с", "💧 62%", "⏱ 752 мм"),
-            DayForecast("Воскресенье, 1 ноября", "+14° / +7°", "Осадки: Небольшой дождь 🌧️", "💨 5.1 м/с", "💧 75%", "⏱ 748 мм"),
-            DayForecast("Понедельник, 2 ноября", "+12° / +5°", "Осадки: Кратковременный дождь 🌦️", "💨 4.0 м/с", "💧 70%", "⏱ 750 мм"),
-            DayForecast("Вторник, 3 ноября", "+13° / +4°", "Осадки: Пасмурно ☁️", "💨 3.2 м/с", "💧 65%", "⏱ 753 мм"),
-            DayForecast("Среда, 4 ноября", "+15° / +6°", "Осадки: Ясно ☀️", "💨 2.8 м/с", "💧 55%", "⏱ 756 мм"),
-            DayForecast("Четверг, 5 ноября", "+10° / +2°", "Осадки: Дождь со снегом ❄️", "💨 6.0 м/с", "💧 82%", "⏱ 745 мм")
-        )
-
-        for (day in days) {
+        for (day in getWeeklyData()) {
             val itemView = inflater.inflate(R.layout.item_weekly_weather, layoutWeeklyContainer, false)
-            itemView.findViewById<TextView>(R.id.tvWeeklyDate).text = day.date
-            itemView.findViewById<TextView>(R.id.tvWeeklyTemp).text = day.temp
-            itemView.findViewById<TextView>(R.id.tvWeeklyPrecipitation).text = day.precipitation
-            itemView.findViewById<TextView>(R.id.tvWeeklyWind).text = day.wind
-            itemView.findViewById<TextView>(R.id.tvWeeklyHumidity).text = day.humidity
-            itemView.findViewById<TextView>(R.id.tvWeeklyPressure).text = day.pressure
+            itemView.findViewById<TextView>(R.id.tvWeeklyDate).text = day.first
+            itemView.findViewById<TextView>(R.id.tvWeeklyTemp).text = day.second
+            itemView.findViewById<TextView>(R.id.tvWeeklyPrecipitation).text = day.third
             layoutWeeklyContainer.addView(itemView)
         }
+    }
+
+    private fun getWeeklyData(): List<Triple<String, String, String>> {
+        return listOf(
+            Triple("Сегодня, 30 октября", "+18° / +9°", "Осадки: Без осадков ☀️"),
+            Triple("Суббота, 31 октября", "+16° / +8°", "Осадки: Переменная облачность ⛅"),
+            Triple("Воскресенье, 1 ноября", "+14° / +7°", "Осадки: Небольшой дождь 🌧️"),
+            Triple("Понедельник, 2 ноября", "+12° / +5°", "Осадки: Кратковременный дождь 🌦️"),
+            Triple("Вторник, 3 ноября", "+13° / +4°", "Осадки: Пасмурно ☁️"),
+            Triple("Среда, 4 ноября", "+15° / +6°", "Осадки: Ясно ☀️"),
+            Triple("Четверг, 5 ноября", "+10° / +2°", "Осадки: Дождь со снегом ❄️")
+        )
     }
 }

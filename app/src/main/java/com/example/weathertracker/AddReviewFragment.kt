@@ -14,7 +14,6 @@ import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import java.util.Calendar
 import java.util.Locale
@@ -63,7 +62,14 @@ class AddReviewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bindViews(view)
+        setupCityAutocomplete()
+        loadInitialData()
+        setupDateTimePickers()
+        setupButtons()
+    }
 
+    private fun bindViews(view: View) {
         etReviewTitle = view.findViewById(R.id.etReviewTitle)
         actvCity = view.findViewById(R.id.actvCity)
         btnPickDate = view.findViewById(R.id.btnPickDate)
@@ -76,8 +82,9 @@ class AddReviewFragment : Fragment() {
         btnCancel = view.findViewById(R.id.btnCancel)
         btnBack = view.findViewById(R.id.btnBack)
         tvAddReviewHeader = view.findViewById(R.id.tvAddReviewHeader)
+    }
 
-        // Подсказки для выпадающего списка городов
+    private fun setupCityAutocomplete() {
         val popularCities = arrayOf(
             "Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург",
             "Казань", "Нижний Новгород", "Челябинск", "Самара",
@@ -85,37 +92,38 @@ class AddReviewFragment : Fragment() {
         )
         val cityAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, popularCities)
         actvCity.setAdapter(cityAdapter)
+    }
 
-        // Чтение переданных аргументов (Шаг 5 Лаб 9)
+    private fun loadInitialData() {
         @Suppress("DEPRECATION")
         editingReview = arguments?.getSerializable(ARG_REVIEW) as? Review
         val initialCity = arguments?.getString(ARG_CITY)
-
         if (editingReview != null) {
-            tvAddReviewHeader.text = "Редактировать отзыв"
-            etReviewTitle.setText(editingReview!!.title)
-            actvCity.setText(editingReview!!.city)
-            etReviewComment.setText(editingReview!!.comment)
-            if (editingReview!!.status == "Совпало") {
-                rbMatched.isChecked = true
-            } else {
-                rbMismatched.isChecked = true
-            }
-            val parts = editingReview!!.date.split(" ")
-            if (parts.isNotEmpty()) {
-                selectedDate = parts[0]
-                btnPickDate.text = "📅 $selectedDate"
-            }
-            if (parts.size > 1) {
-                selectedTime = parts[1]
-                btnPickTime.text = "⏰ $selectedTime"
-            }
+            populateEditingReview(editingReview!!)
         } else {
             val cityToUse = if (!initialCity.isNullOrBlank()) initialCity else WeatherAppState.currentCity
             actvCity.setText(cityToUse)
         }
+    }
 
-        // Выбор даты через DatePickerDialog
+    private fun populateEditingReview(review: Review) {
+        tvAddReviewHeader.text = "Редактировать отзыв"
+        etReviewTitle.setText(review.title)
+        actvCity.setText(review.city)
+        etReviewComment.setText(review.comment)
+        if (review.status == "Совпало") rbMatched.isChecked = true else rbMismatched.isChecked = true
+        val parts = review.date.split(" ")
+        if (parts.isNotEmpty()) {
+            selectedDate = parts[0]
+            btnPickDate.text = "📅 $selectedDate"
+        }
+        if (parts.size > 1) {
+            selectedTime = parts[1]
+            btnPickTime.text = "⏰ $selectedTime"
+        }
+    }
+
+    private fun setupDateTimePickers() {
         btnPickDate.setOnClickListener {
             val calendar = Calendar.getInstance()
             DatePickerDialog(
@@ -129,8 +137,6 @@ class AddReviewFragment : Fragment() {
                 calendar.get(Calendar.DAY_OF_MONTH)
             ).show()
         }
-
-        // Выбор времени через TimePickerDialog
         btnPickTime.setOnClickListener {
             val calendar = Calendar.getInstance()
             TimePickerDialog(
@@ -144,67 +150,73 @@ class AddReviewFragment : Fragment() {
                 true
             ).show()
         }
+    }
 
-        // Кнопка Сохранить
-        btnSave.setOnClickListener {
-            val title = etReviewTitle.text.toString().trim()
-            val city = actvCity.text.toString().trim()
-            val comment = etReviewComment.text.toString().trim()
-            val status = if (rbMatched.isChecked) "Совпало" else "Не совпало"
+    private fun setupButtons() {
+        btnSave.setOnClickListener { onSaveClicked() }
+        btnCancel.setOnClickListener { parentFragmentManager.popBackStack() }
+        btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
+    }
 
-            if (title.isEmpty()) {
-                etReviewTitle.error = "Введите заголовок отзыва"
-                return@setOnClickListener
-            }
-            if (city.isEmpty()) {
-                actvCity.error = "Укажите город"
-                return@setOnClickListener
-            }
-            if (comment.isEmpty()) {
-                etReviewComment.error = "Введите текст комментария"
-                return@setOnClickListener
-            }
+    private fun onSaveClicked() {
+        val title = etReviewTitle.text.toString().trim()
+        val city = actvCity.text.toString().trim()
+        val comment = etReviewComment.text.toString().trim()
+        val status = if (rbMatched.isChecked) "Совпало" else "Не совпало"
 
-            val fullDate = "$selectedDate $selectedTime"
+        if (!validateInputs(title, city, comment)) return
 
-            if (editingReview != null) {
-                val updated = editingReview!!.copy(
-                    title = title,
-                    city = city,
-                    date = fullDate,
-                    status = status,
-                    comment = comment
-                )
-                ReviewRepository.updateReview(updated)
-            } else {
-                val newReview = Review(
-                    title = title,
-                    city = city,
-                    date = fullDate,
-                    status = status,
-                    comment = comment
-                )
-                ReviewRepository.addReview(newReview)
-            }
+        val fullDate = "$selectedDate $selectedTime"
+        saveReview(title, city, fullDate, status, comment)
+        sendFragmentResult(title, city, status, comment)
+        parentFragmentManager.popBackStack()
+    }
 
-            // Передача результата через Fragment Result API (Шаг 5 Лаб 9)
-            val resultBundle = Bundle().apply {
-                putString("title", title)
-                putString("city", city)
-                putString("status", status)
-                putString("comment", comment)
-            }
-            parentFragmentManager.setFragmentResult("review_added", resultBundle)
-
-            parentFragmentManager.popBackStack()
+    private fun validateInputs(title: String, city: String, comment: String): Boolean {
+        if (title.isEmpty()) {
+            etReviewTitle.error = "Введите заголовок отзыва"
+            return false
         }
-
-        btnCancel.setOnClickListener {
-            parentFragmentManager.popBackStack()
+        if (city.isEmpty()) {
+            actvCity.error = "Укажите город"
+            return false
         }
-
-        btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
+        if (comment.isEmpty()) {
+            etReviewComment.error = "Введите текст комментария"
+            return false
         }
+        return true
+    }
+
+    private fun saveReview(title: String, city: String, fullDate: String, status: String, comment: String) {
+        if (editingReview != null) {
+            val updated = editingReview!!.copy(
+                title = title,
+                city = city,
+                date = fullDate,
+                status = status,
+                comment = comment
+            )
+            ReviewRepository.updateReview(updated)
+        } else {
+            val newReview = Review(
+                title = title,
+                city = city,
+                date = fullDate,
+                status = status,
+                comment = comment
+            )
+            ReviewRepository.addReview(newReview)
+        }
+    }
+
+    private fun sendFragmentResult(title: String, city: String, status: String, comment: String) {
+        val resultBundle = Bundle().apply {
+            putString("title", title)
+            putString("city", city)
+            putString("status", status)
+            putString("comment", comment)
+        }
+        parentFragmentManager.setFragmentResult("review_added", resultBundle)
     }
 }

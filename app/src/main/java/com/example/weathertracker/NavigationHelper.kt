@@ -18,44 +18,44 @@ object NavigationHelper {
     private val COLOR_INACTIVE = Color.parseColor("#718096")
 
     fun highlightTab(activity: Activity, currentTab: Int) {
-        val ivNavWeather = activity.findViewById<ImageView>(R.id.ivNavWeather) ?: return
-        val tvNavWeather = activity.findViewById<TextView>(R.id.tvNavWeather) ?: return
-        val ivNavForecast = activity.findViewById<ImageView>(R.id.ivNavForecast) ?: return
-        val tvNavForecast = activity.findViewById<TextView>(R.id.tvNavForecast) ?: return
-        val ivNavReviews = activity.findViewById<ImageView>(R.id.ivNavReviews) ?: return
-        val tvNavReviews = activity.findViewById<TextView>(R.id.tvNavReviews) ?: return
-        val ivNavSettings = activity.findViewById<ImageView>(R.id.ivNavSettings) ?: return
-        val tvNavSettings = activity.findViewById<TextView>(R.id.tvNavSettings) ?: return
+        val weatherPair = getTabViews(activity, R.id.ivNavWeather, R.id.tvNavWeather) ?: return
+        val forecastPair = getTabViews(activity, R.id.ivNavForecast, R.id.tvNavForecast) ?: return
+        val reviewsPair = getTabViews(activity, R.id.ivNavReviews, R.id.tvNavReviews) ?: return
+        val settingsPair = getTabViews(activity, R.id.ivNavSettings, R.id.tvNavSettings) ?: return
 
-        // Сброс всех вкладок в неактивное состояние
-        ivNavWeather.setColorFilter(COLOR_INACTIVE)
-        tvNavWeather.setTextColor(COLOR_INACTIVE)
-        ivNavForecast.setColorFilter(COLOR_INACTIVE)
-        tvNavForecast.setTextColor(COLOR_INACTIVE)
-        ivNavReviews.setColorFilter(COLOR_INACTIVE)
-        tvNavReviews.setTextColor(COLOR_INACTIVE)
-        ivNavSettings.setColorFilter(COLOR_INACTIVE)
-        tvNavSettings.setTextColor(COLOR_INACTIVE)
+        resetTabs(weatherPair, forecastPair, reviewsPair, settingsPair)
+        applyActiveTab(currentTab, weatherPair, forecastPair, reviewsPair, settingsPair)
+    }
 
-        // Подсветка активной вкладки
-        when (currentTab) {
-            TAB_WEATHER -> {
-                ivNavWeather.setColorFilter(COLOR_ACTIVE)
-                tvNavWeather.setTextColor(COLOR_ACTIVE)
-            }
-            TAB_FORECAST -> {
-                ivNavForecast.setColorFilter(COLOR_ACTIVE)
-                tvNavForecast.setTextColor(COLOR_ACTIVE)
-            }
-            TAB_REVIEWS -> {
-                ivNavReviews.setColorFilter(COLOR_ACTIVE)
-                tvNavReviews.setTextColor(COLOR_ACTIVE)
-            }
-            TAB_SETTINGS -> {
-                ivNavSettings.setColorFilter(COLOR_ACTIVE)
-                tvNavSettings.setTextColor(COLOR_ACTIVE)
-            }
+    private fun getTabViews(activity: Activity, iconId: Int, textId: Int): Pair<ImageView, TextView>? {
+        val icon = activity.findViewById<ImageView>(iconId) ?: return null
+        val text = activity.findViewById<TextView>(textId) ?: return null
+        return Pair(icon, text)
+    }
+
+    private fun resetTabs(vararg tabs: Pair<ImageView, TextView>) {
+        for (tab in tabs) {
+            tab.first.setColorFilter(COLOR_INACTIVE)
+            tab.second.setTextColor(COLOR_INACTIVE)
         }
+    }
+
+    private fun applyActiveTab(
+        currentTab: Int,
+        weather: Pair<ImageView, TextView>,
+        forecast: Pair<ImageView, TextView>,
+        reviews: Pair<ImageView, TextView>,
+        settings: Pair<ImageView, TextView>
+    ) {
+        val activePair = when (currentTab) {
+            TAB_WEATHER -> weather
+            TAB_FORECAST -> forecast
+            TAB_REVIEWS -> reviews
+            TAB_SETTINGS -> settings
+            else -> null
+        }
+        activePair?.first?.setColorFilter(COLOR_ACTIVE)
+        activePair?.second?.setTextColor(COLOR_ACTIVE)
     }
 
     fun setupBottomNav(activity: Activity, onTabSelected: (Int) -> Unit) {

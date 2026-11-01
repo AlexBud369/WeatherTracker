@@ -58,7 +58,14 @@ class WeatherMainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bindViews(view)
+        setupResultListener()
+        setupSearchListeners()
+        setupNavigationButtons()
+        updateWeatherDisplay(WeatherAppState.currentCity)
+    }
 
+    private fun bindViews(view: View) {
         etSearchCity = view.findViewById(R.id.etSearchCity)
         btnSearch = view.findViewById(R.id.btnSearch)
         tvCityName = view.findViewById(R.id.tvCityName)
@@ -74,62 +81,55 @@ class WeatherMainFragment : Fragment() {
         btnShowDetails = view.findViewById(R.id.btnShowDetails)
         btnAddReview = view.findViewById(R.id.btnAddReview)
         tvLatestReviewNotice = view.findViewById(R.id.tvLatestReviewNotice)
+    }
 
-        updateWeatherDisplay(WeatherAppState.currentCity)
-
-        // Слушатель результатов из дочерних фрагментов (Fragment Result API, Шаг 5 Лаб 9)
-        parentFragmentManager.setFragmentResultListener(
-            "review_added",
-            viewLifecycleOwner
-        ) { _, bundle ->
+    private fun setupResultListener() {
+        parentFragmentManager.setFragmentResultListener("review_added", viewLifecycleOwner) { _, bundle ->
             val title = bundle.getString("title") ?: "Отзыв о погоде"
             val city = bundle.getString("city") ?: WeatherAppState.currentCity
             val status = bundle.getString("status") ?: "Совпало"
-
-            tvLatestReviewNotice.apply {
-                removeCallbacks(hideNoticeRunnable)
-                alpha = 1f
-                visibility = View.VISIBLE
-                text = "✓ Добавлен отзыв: «$title» для города $city ($status)  ✕"
-                setOnClickListener {
-                    removeCallbacks(hideNoticeRunnable)
-                    visibility = View.GONE
-                }
-                postDelayed(hideNoticeRunnable, 4000)
-            }
+            displayReviewNotice(title, city, status)
         }
+    }
 
-        // Поиск города по кнопке в строке поиска
+    private fun displayReviewNotice(title: String, city: String, status: String) {
+        tvLatestReviewNotice.apply {
+            removeCallbacks(hideNoticeRunnable)
+            alpha = 1f
+            visibility = View.VISIBLE
+            text = "✓ Добавлен отзыв: «$title» для города $city ($status)  ✕"
+            setOnClickListener {
+                removeCallbacks(hideNoticeRunnable)
+                visibility = View.GONE
+            }
+            postDelayed(hideNoticeRunnable, 4000)
+        }
+    }
+
+    private fun setupSearchListeners() {
         btnSearch.setOnClickListener {
             performSearch()
         }
-
-        // Поиск города при нажатии на клавиатуре телефона (Enter / Поиск)
         etSearchCity.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                actionId == EditorInfo.IME_ACTION_DONE ||
-                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
-            ) {
+            val isEnterKey = event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE || isEnterKey) {
                 performSearch()
                 true
             } else {
                 false
             }
         }
+    }
 
-        // Переход на экран подробного прогноза (Экран 2) с передачей текущего города
+    private fun setupNavigationButtons() {
         btnShowDetails.setOnClickListener {
             val forecastFragment = ForecastFragment.newInstance(WeatherAppState.currentCity)
             (activity as? MainActivity)?.openFragment(forecastFragment, addToBackStack = true)
         }
-
-        // Открытие экрана добавления отзыва (Экран 4) с передачей текущего города
         btnAddReview.setOnClickListener {
             val addReviewFragment = AddReviewFragment.newInstance(city = WeatherAppState.currentCity)
             (activity as? MainActivity)?.openFragment(addReviewFragment, addToBackStack = true)
         }
-
-        // Открытие интерактивной карты
         cardMapPreview.setOnClickListener {
             val mapFragment = MapFragment.newInstance(WeatherAppState.currentCity)
             (activity as? MainActivity)?.openFragment(mapFragment, addToBackStack = true)
@@ -164,38 +164,19 @@ class WeatherMainFragment : Fragment() {
         tvCityName.text = city
         tvMapCityTitle.text = "Интерактивная карта осадков: $city"
         when (city.lowercase()) {
-            "санкт-петербург", "питер" -> {
-                tvCurrentTemp.text = "+11°C"
-                tvFeelsLike.text = "Ощущается как +8°C"
-                tvCondition.text = "Дождь 🌧️"
-                tvWind.text = "6.5 м/с"
-                tvHumidity.text = "88%"
-                tvPressure.text = "747 мм"
-            }
-            "сочи" -> {
-                tvCurrentTemp.text = "+22°C"
-                tvFeelsLike.text = "Ощущается как +23°C"
-                tvCondition.text = "Солнечно ☀️"
-                tvWind.text = "2.1 м/с"
-                tvHumidity.text = "55%"
-                tvPressure.text = "758 мм"
-            }
-            "новосибирск" -> {
-                tvCurrentTemp.text = "+4°C"
-                tvFeelsLike.text = "Ощущается как +1°C"
-                tvCondition.text = "Облачно ☁️"
-                tvWind.text = "5.0 м/с"
-                tvHumidity.text = "72%"
-                tvPressure.text = "750 мм"
-            }
-            else -> {
-                tvCurrentTemp.text = "+18°C"
-                tvFeelsLike.text = "Ощущается как +16°C"
-                tvCondition.text = "Ясно ☀️"
-                tvWind.text = "4.2 м/с"
-                tvHumidity.text = "65%"
-                tvPressure.text = "752 мм"
-            }
+            "санкт-петербург", "питер" -> setWeatherData("+11°C", "Ощущается как +8°C", "Дождь 🌧️", "6.5 м/с", "88%", "747 мм")
+            "сочи" -> setWeatherData("+22°C", "Ощущается как +23°C", "Солнечно ☀️", "2.1 м/с", "55%", "758 мм")
+            "новосибирск" -> setWeatherData("+4°C", "Ощущается как +1°C", "Облачно ☁️", "5.0 м/с", "72%", "750 мм")
+            else -> setWeatherData("+18°C", "Ощущается как +16°C", "Ясно ☀️", "4.2 м/с", "65%", "752 мм")
         }
+    }
+
+    private fun setWeatherData(temp: String, feels: String, cond: String, wind: String, hum: String, press: String) {
+        tvCurrentTemp.text = temp
+        tvFeelsLike.text = feels
+        tvCondition.text = cond
+        tvWind.text = wind
+        tvHumidity.text = hum
+        tvPressure.text = press
     }
 }

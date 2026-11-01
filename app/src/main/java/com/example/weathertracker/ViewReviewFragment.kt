@@ -56,7 +56,13 @@ class ViewReviewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bindViews(view)
+        loadReviewFromArguments()
+        displayReviewData()
+        setupActionButtons()
+    }
 
+    private fun bindViews(view: View) {
         tvReviewTitle = view.findViewById(R.id.tvReviewTitle)
         tvReviewCity = view.findViewById(R.id.tvReviewCity)
         tvReviewDate = view.findViewById(R.id.tvReviewDate)
@@ -65,14 +71,15 @@ class ViewReviewFragment : Fragment() {
         btnEditReview = view.findViewById(R.id.btnEditReview)
         btnBackToList = view.findViewById(R.id.btnBackToList)
         btnBack = view.findViewById(R.id.btnBack)
+    }
 
+    private fun loadReviewFromArguments() {
         val title = arguments?.getString(ARG_TITLE) ?: "Отзыв о погоде"
         val city = arguments?.getString(ARG_CITY) ?: "Город не указан"
         val date = arguments?.getString(ARG_DATE) ?: "Дата не указана"
         val status = arguments?.getString(ARG_STATUS) ?: "Совпало"
         val comment = arguments?.getString(ARG_COMMENT) ?: "Комментарий отсутствует"
         val reviewId = arguments?.getLong(ARG_REVIEW_ID, 0L) ?: 0L
-
         currentReview = Review(
             id = reviewId,
             title = title,
@@ -81,13 +88,19 @@ class ViewReviewFragment : Fragment() {
             status = status,
             comment = comment
         )
+    }
 
-        tvReviewTitle.text = title
-        tvReviewCity.text = city
-        tvReviewDate.text = date
-        tvReviewStatus.text = status
-        tvReviewComment.text = comment
+    private fun displayReviewData() {
+        val review = currentReview ?: return
+        tvReviewTitle.text = review.title
+        tvReviewCity.text = review.city
+        tvReviewDate.text = review.date
+        tvReviewStatus.text = review.status
+        tvReviewComment.text = review.comment
+        applyStatusBadge(review.status)
+    }
 
+    private fun applyStatusBadge(status: String) {
         if (status == "Совпало") {
             tvReviewStatus.setBackgroundResource(R.drawable.bg_badge_matched)
             tvReviewStatus.setTextColor(Color.parseColor("#2E7D32"))
@@ -95,19 +108,18 @@ class ViewReviewFragment : Fragment() {
             tvReviewStatus.setBackgroundResource(R.drawable.bg_badge_mismatched)
             tvReviewStatus.setTextColor(Color.parseColor("#D32F2F"))
         }
+    }
 
-        // Переход в редактирование отзыва
+    private fun setupActionButtons() {
         btnEditReview.setOnClickListener {
             currentReview?.let { rev ->
                 val editFragment = AddReviewFragment.newInstance(review = rev)
                 (activity as? MainActivity)?.openFragment(editFragment, addToBackStack = true)
             }
         }
-
         btnBackToList.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
-
         btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
