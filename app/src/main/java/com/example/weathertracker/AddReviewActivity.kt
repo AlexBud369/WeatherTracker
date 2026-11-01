@@ -12,8 +12,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Calendar
 import java.util.Locale
@@ -48,7 +46,15 @@ class AddReviewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_review)
+        bindViews()
+        setupCityAutocomplete()
+        loadIntentData()
+        setupDateTimePickers()
+        setupButtons()
+        NavigationHelper.setupBottomNav(this, NavigationHelper.TAB_REVIEWS)
+    }
 
+    private fun bindViews() {
         etReviewTitle = findViewById(R.id.etReviewTitle)
         actvCity = findViewById(R.id.actvCity)
         btnPickDate = findViewById(R.id.btnPickDate)
@@ -60,8 +66,9 @@ class AddReviewActivity : AppCompatActivity() {
         btnSave = findViewById(R.id.btnSave)
         btnCancel = findViewById(R.id.btnCancel)
         btnBack = findViewById(R.id.btnBack)
+    }
 
-        // Список городов для автодополнения (выпадающий список с поиском)
+    private fun setupCityAutocomplete() {
         val cities = listOf(
             "Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург",
             "Казань", "Нижний Новгород", "Челябинск", "Самара",
@@ -70,21 +77,24 @@ class AddReviewActivity : AppCompatActivity() {
         )
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, cities)
         actvCity.setAdapter(adapter)
+    }
 
-        // Получаем переданный город или данные для редактирования
-        val passedCity = intent.getStringExtra(EXTRA_CITY)
-        if (!passedCity.isNullOrBlank()) {
-            actvCity.setText(passedCity)
+    private fun loadIntentData() {
+        intent.getStringExtra(EXTRA_CITY)?.takeIf { it.isNotBlank() }?.let { actvCity.setText(it) }
+        intent.getStringExtra(EXTRA_TITLE)?.takeIf { it.isNotBlank() }?.let { etReviewTitle.setText(it) }
+        intent.getStringExtra(EXTRA_COMMENT)?.takeIf { it.isNotBlank() }?.let { etReviewComment.setText(it) }
+        parseDateTime(intent.getStringExtra(EXTRA_DATE))
+        if (intent.getStringExtra(EXTRA_STATUS) == "Не совпало") {
+            rbMismatched.isChecked = true
+        } else {
+            rbMatched.isChecked = true
         }
+        editReviewId = intent.getLongExtra(EXTRA_REVIEW_ID, 0L)
+    }
 
-        val passedTitle = intent.getStringExtra(EXTRA_TITLE)
-        if (!passedTitle.isNullOrBlank()) {
-            etReviewTitle.setText(passedTitle)
-        }
-
-        val passedDate = intent.getStringExtra(EXTRA_DATE)
-        if (!passedDate.isNullOrBlank()) {
-            val parts = passedDate.split(" ")
+    private fun parseDateTime(dateStr: String?) {
+        if (!dateStr.isNullOrBlank()) {
+            val parts = dateStr.split(" ")
             if (parts.isNotEmpty()) {
                 selectedDate = parts[0]
                 btnPickDate.text = selectedDate
@@ -94,113 +104,87 @@ class AddReviewActivity : AppCompatActivity() {
                 btnPickTime.text = selectedTime
             }
         }
+    }
 
-        val passedStatus = intent.getStringExtra(EXTRA_STATUS)
-        if (passedStatus == "Не совпало") {
-            rbMismatched.isChecked = true
-        } else {
-            rbMatched.isChecked = true
-        }
-
-        val passedComment = intent.getStringExtra(EXTRA_COMMENT)
-        if (!passedComment.isNullOrBlank()) {
-            etReviewComment.setText(passedComment)
-        }
-
-        editReviewId = intent.getLongExtra(EXTRA_REVIEW_ID, 0L)
-
-        // Выбор даты через DatePickerDialog (календарь)
+    private fun setupDateTimePickers() {
         btnPickDate.setOnClickListener {
             val calendar = Calendar.getInstance()
-            DatePickerDialog(
-                this,
-                { _, year, month, dayOfMonth ->
-                    selectedDate = String.format(Locale.getDefault(), "%02d.%02d.%04d", dayOfMonth, month + 1, year)
-                    btnPickDate.text = selectedDate
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            DatePickerDialog(this, { _, year, month, dayOfMonth ->
+                selectedDate = String.format(Locale.getDefault(), "%02d.%02d.%04d", dayOfMonth, month + 1, year)
+                btnPickDate.text = selectedDate
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
         }
-
-        // Выбор времени через TimePickerDialog
         btnPickTime.setOnClickListener {
             val calendar = Calendar.getInstance()
-            TimePickerDialog(
-                this,
-                { _, hourOfDay, minute ->
-                    selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute)
-                    btnPickTime.text = selectedTime
-                },
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
-                true
-            ).show()
+            TimePickerDialog(this, { _, hourOfDay, minute ->
+                selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute)
+                btnPickTime.text = selectedTime
+            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
         }
+    }
 
-        // Сохранение и возврат данных через Intent (требование Лаб 8)
-        btnSave.setOnClickListener {
-            val title = etReviewTitle.text.toString().trim()
-            val city = actvCity.text.toString().trim()
-            val comment = etReviewComment.text.toString().trim()
-            val status = if (rbMatched.isChecked) "Совпало" else "Не совпало"
-            val fullDateTime = "$selectedDate $selectedTime"
-
-            if (title.isEmpty()) {
-                etReviewTitle.error = "Введите заголовок отзыва"
-                return@setOnClickListener
-            }
-            if (city.isEmpty()) {
-                actvCity.error = "Укажите город"
-                return@setOnClickListener
-            }
-            if (comment.isEmpty()) {
-                etReviewComment.error = "Введите текст комментария"
-                return@setOnClickListener
-            }
-
-            val reviewId = if (editReviewId != 0L) editReviewId else System.currentTimeMillis()
-            val newReview = Review(
-                id = reviewId,
-                title = title,
-                city = city,
-                date = fullDateTime,
-                status = status,
-                comment = comment
-            )
-
-            if (editReviewId != 0L) {
-                ReviewRepository.updateReview(newReview)
-            } else {
-                ReviewRepository.addReview(newReview)
-            }
-
-            // Формируем Intent с возвращаемыми данными
-            val resultIntent = Intent().apply {
-                putExtra(EXTRA_REVIEW_ID, reviewId)
-                putExtra(EXTRA_TITLE, title)
-                putExtra(EXTRA_CITY, city)
-                putExtra(EXTRA_DATE, fullDateTime)
-                putExtra(EXTRA_STATUS, status)
-                putExtra(EXTRA_COMMENT, comment)
-            }
-
-            // Возврат результата в родительскую Activity
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish()
-        }
-
+    private fun setupButtons() {
+        btnSave.setOnClickListener { onSaveClicked() }
         btnCancel.setOnClickListener {
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
-
         btnBack.setOnClickListener {
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
+    }
 
-        NavigationHelper.setupBottomNav(this, NavigationHelper.TAB_REVIEWS)
+    private fun onSaveClicked() {
+        val title = etReviewTitle.text.toString().trim()
+        val city = actvCity.text.toString().trim()
+        val comment = etReviewComment.text.toString().trim()
+        val status = if (rbMatched.isChecked) "Совпало" else "Не совпало"
+        val fullDateTime = "$selectedDate $selectedTime"
+
+        if (!validateInputs(title, city, comment)) return
+
+        val reviewId = saveReview(title, city, fullDateTime, status, comment)
+        returnResult(reviewId, title, city, fullDateTime, status, comment)
+    }
+
+    private fun validateInputs(title: String, city: String, comment: String): Boolean {
+        if (title.isEmpty()) {
+            etReviewTitle.error = "Введите заголовок отзыва"
+            return false
+        }
+        if (city.isEmpty()) {
+            actvCity.error = "Укажите город"
+            return false
+        }
+        if (comment.isEmpty()) {
+            etReviewComment.error = "Введите текст комментария"
+            return false
+        }
+        return true
+    }
+
+    private fun saveReview(title: String, city: String, date: String, status: String, comment: String): Long {
+        val reviewId = if (editReviewId != 0L) editReviewId else System.currentTimeMillis()
+        val review = Review(id = reviewId, title = title, city = city, date = date, status = status, comment = comment)
+        if (editReviewId != 0L) {
+            ReviewRepository.updateReview(review)
+        } else {
+            ReviewRepository.addReview(review)
+        }
+        return reviewId
+    }
+
+    private fun returnResult(reviewId: Long, title: String, city: String, date: String, status: String, comment: String) {
+        val resultIntent = Intent().apply {
+            putExtra(EXTRA_REVIEW_ID, reviewId)
+            putExtra(EXTRA_TITLE, title)
+            putExtra(EXTRA_CITY, city)
+            putExtra(EXTRA_DATE, date)
+            putExtra(EXTRA_STATUS, status)
+            putExtra(EXTRA_COMMENT, comment)
+        }
+        setResult(Activity.RESULT_OK, resultIntent)
+        finish()
     }
 }

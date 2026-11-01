@@ -26,38 +26,42 @@ class ReviewCardAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_review_card, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_review_card, parent, false)
         return ReviewViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val review = reviews[position]
+        bindTextData(holder, review)
+        bindStatusBadge(holder, review.status)
+        bindClickListeners(holder, review)
+    }
+
+    private fun bindTextData(holder: ReviewViewHolder, review: Review) {
         holder.tvCardCity.text = review.city
         holder.tvCardTitle.text = review.title.ifEmpty { "Отзыв о погоде" }
         holder.tvCardSnippet.text = review.comment
         holder.tvCardDate.text = review.date
         holder.tvCardStatus.text = review.status
+    }
 
-        if (review.status == "Совпало") {
+    private fun bindStatusBadge(holder: ReviewViewHolder, status: String) {
+        if (status == "Совпало") {
             holder.tvCardStatus.setBackgroundResource(R.drawable.bg_badge_matched)
             holder.tvCardStatus.setTextColor(Color.parseColor("#2E7D32"))
         } else {
             holder.tvCardStatus.setBackgroundResource(R.drawable.bg_badge_mismatched)
             holder.tvCardStatus.setTextColor(Color.parseColor("#D32F2F"))
         }
+    }
 
-        // Клик по блоку карточки - открытие экрана детального просмотра отзыва
+    private fun bindClickListeners(holder: ReviewViewHolder, review: Review) {
         holder.itemView.setOnClickListener { onItemClick(review) }
-
-        // Клик по кнопке редактирования
         holder.btnCardEdit.setOnClickListener { onEditClick(review) }
-
-        // Клик по кнопке удаления
         holder.btnCardDelete.setOnClickListener { onDeleteClick(review) }
     }
 
-    override fun getItemCount() = reviews.size
+    override fun getItemCount(): Int = reviews.size
 
     fun updateList(newList: List<Review>) {
         reviews = newList

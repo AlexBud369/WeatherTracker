@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.card.MaterialCardView
@@ -42,40 +41,28 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    // Регистрация ActivityResultLauncher для получения возвращаемых данных (Лаб 8, Шаг 4)
     private val addReviewLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val data = result.data
-            val title = data?.getStringExtra(AddReviewActivity.EXTRA_TITLE) ?: ""
-            val city = data?.getStringExtra(AddReviewActivity.EXTRA_CITY) ?: currentCity
-            val status = data?.getStringExtra(AddReviewActivity.EXTRA_STATUS) ?: "Совпало"
-
-            tvLatestReviewNotice.apply {
-                removeCallbacks(hideNoticeRunnable)
-                alpha = 1f
-                visibility = View.VISIBLE
-                text = "✓ Добавлен отзыв: «$title» для города $city ($status)  ✕"
-                setOnClickListener {
-                    removeCallbacks(hideNoticeRunnable)
-                    visibility = View.GONE
-                }
-                postDelayed(hideNoticeRunnable, 4000)
-            }
-
-            Toast.makeText(
-                this,
-                "Результат успешно получен из дочерней Activity: «$title»",
-                Toast.LENGTH_LONG
-            ).show()
+            val title = result.data?.getStringExtra(AddReviewActivity.EXTRA_TITLE) ?: ""
+            val city = result.data?.getStringExtra(AddReviewActivity.EXTRA_CITY) ?: currentCity
+            val status = result.data?.getStringExtra(AddReviewActivity.EXTRA_STATUS) ?: "Совпало"
+            displayNotice(title, city, status)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        bindViews()
+        setupSearch()
+        setupNavigationButtons()
+        updateWeatherDisplay(currentCity)
+        NavigationHelper.setupBottomNav(this, NavigationHelper.TAB_WEATHER)
+    }
 
+    private fun bindViews() {
         etSearchCity = findViewById(R.id.etSearchCity)
         btnSearch = findViewById(R.id.btnSearch)
         tvCityName = findViewById(R.id.tvCityName)
@@ -91,47 +78,51 @@ class MainActivity : AppCompatActivity() {
         btnShowDetails = findViewById(R.id.btnShowDetails)
         btnAddReview = findViewById(R.id.btnAddReview)
         tvLatestReviewNotice = findViewById(R.id.tvLatestReviewNotice)
+    }
 
-        updateWeatherDisplay(currentCity)
-
-        // Поиск города
+    private fun setupSearch() {
         btnSearch.setOnClickListener {
             val query = etSearchCity.text.toString().trim()
             if (query.isNotEmpty()) {
                 currentCity = query
                 updateWeatherDisplay(currentCity)
-                Toast.makeText(this, "Город изменен на: $currentCity", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Введите название города для поиска", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
-        // Переход на экран подробного прогноза с передачей города через Intent (Шаг 2 и 3 Лаб 8)
+    private fun setupNavigationButtons() {
         btnShowDetails.setOnClickListener {
             val intent = Intent(this, WeatherDetailActivity::class.java).apply {
                 putExtra(WeatherDetailActivity.EXTRA_CITY, currentCity)
             }
             startActivity(intent)
         }
-
-        // Открытие экрана добавления отзыва с ожиданием результата (Шаг 4 Лаб 8)
         btnAddReview.setOnClickListener {
             val intent = Intent(this, AddReviewActivity::class.java).apply {
                 putExtra(AddReviewActivity.EXTRA_CITY, currentCity)
             }
             addReviewLauncher.launch(intent)
         }
-
-        // Открытие увеличенной карты поверх экрана через явный Intent
         cardMapPreview.setOnClickListener {
             val intent = Intent(this, MapActivity::class.java).apply {
                 putExtra(MapActivity.EXTRA_CITY, currentCity)
             }
             startActivity(intent)
         }
+    }
 
-        // Инициализация нижней панели навигации
-        NavigationHelper.setupBottomNav(this, NavigationHelper.TAB_WEATHER)
+    private fun displayNotice(title: String, city: String, status: String) {
+        tvLatestReviewNotice.apply {
+            removeCallbacks(hideNoticeRunnable)
+            alpha = 1f
+            visibility = View.VISIBLE
+            text = "✓ Добавлен отзыв: «$title» для города $city ($status)  ✕"
+            setOnClickListener {
+                removeCallbacks(hideNoticeRunnable)
+                visibility = View.GONE
+            }
+            postDelayed(hideNoticeRunnable, 4000)
+        }
     }
 
     override fun onResume() {
@@ -148,38 +139,19 @@ class MainActivity : AppCompatActivity() {
         tvCityName.text = city
         tvMapCityTitle.text = "Интерактивная карта осадков: $city"
         when (city.lowercase()) {
-            "санкт-петербург", "питер" -> {
-                tvCurrentTemp.text = "+11°C"
-                tvFeelsLike.text = "Ощущается как +8°C"
-                tvCondition.text = "Дождь 🌧️"
-                tvWind.text = "6.5 м/с"
-                tvHumidity.text = "88%"
-                tvPressure.text = "747 мм"
-            }
-            "сочи" -> {
-                tvCurrentTemp.text = "+22°C"
-                tvFeelsLike.text = "Ощущается как +23°C"
-                tvCondition.text = "Солнечно ☀️"
-                tvWind.text = "2.1 м/с"
-                tvHumidity.text = "55%"
-                tvPressure.text = "758 мм"
-            }
-            "новосибирск" -> {
-                tvCurrentTemp.text = "+4°C"
-                tvFeelsLike.text = "Ощущается как +1°C"
-                tvCondition.text = "Облачно ☁️"
-                tvWind.text = "5.0 м/с"
-                tvHumidity.text = "72%"
-                tvPressure.text = "750 мм"
-            }
-            else -> {
-                tvCurrentTemp.text = "+18°C"
-                tvFeelsLike.text = "Ощущается как +16°C"
-                tvCondition.text = "Ясно ☀️"
-                tvWind.text = "4.2 м/с"
-                tvHumidity.text = "65%"
-                tvPressure.text = "752 мм"
-            }
+            "санкт-петербург", "питер" -> setWeatherData("+11°C", "Ощущается как +8°C", "Дождь 🌧️", "6.5 м/с", "88%", "747 мм")
+            "сочи" -> setWeatherData("+22°C", "Ощущается как +23°C", "Солнечно ☀️", "2.1 м/с", "55%", "758 мм")
+            "новосибирск" -> setWeatherData("+4°C", "Ощущается как +1°C", "Облачно ☁️", "5.0 м/с", "72%", "750 мм")
+            else -> setWeatherData("+18°C", "Ощущается как +16°C", "Ясно ☀️", "4.2 м/с", "65%", "752 мм")
         }
+    }
+
+    private fun setWeatherData(temp: String, feels: String, cond: String, wind: String, hum: String, press: String) {
+        tvCurrentTemp.text = temp
+        tvFeelsLike.text = feels
+        tvCondition.text = cond
+        tvWind.text = wind
+        tvHumidity.text = hum
+        tvPressure.text = press
     }
 }

@@ -31,7 +31,13 @@ class ViewReviewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_review)
+        bindViews()
+        displayData()
+        setupButtons()
+        NavigationHelper.setupBottomNav(this, NavigationHelper.TAB_REVIEWS)
+    }
 
+    private fun bindViews() {
         tvReviewTitle = findViewById(R.id.tvReviewTitle)
         tvReviewCity = findViewById(R.id.tvReviewCity)
         tvReviewDate = findViewById(R.id.tvReviewDate)
@@ -40,21 +46,24 @@ class ViewReviewActivity : AppCompatActivity() {
         btnEditReview = findViewById(R.id.btnEditReview)
         btnBackToList = findViewById(R.id.btnBackToList)
         btnBack = findViewById(R.id.btnBack)
+    }
 
-        // Получение переданных через Intent данных (Шаг 3 лаб 8)
+    private fun displayData() {
         val title = intent.getStringExtra(EXTRA_TITLE) ?: "Отзыв о погоде"
         val city = intent.getStringExtra(EXTRA_CITY) ?: "Город не указан"
         val date = intent.getStringExtra(EXTRA_DATE) ?: "Дата не указана"
         val status = intent.getStringExtra(EXTRA_STATUS) ?: "Совпало"
         val comment = intent.getStringExtra(EXTRA_COMMENT) ?: "Комментарий отсутствует"
-        val reviewId = intent.getLongExtra(EXTRA_REVIEW_ID, 0L)
 
         tvReviewTitle.text = title
         tvReviewCity.text = city
         tvReviewDate.text = date
         tvReviewStatus.text = status
         tvReviewComment.text = comment
+        applyStatusBadge(status)
+    }
 
+    private fun applyStatusBadge(status: String) {
         if (status == "Совпало") {
             tvReviewStatus.setBackgroundResource(R.drawable.bg_badge_matched)
             tvReviewStatus.setTextColor(Color.parseColor("#2E7D32"))
@@ -62,28 +71,24 @@ class ViewReviewActivity : AppCompatActivity() {
             tvReviewStatus.setBackgroundResource(R.drawable.bg_badge_mismatched)
             tvReviewStatus.setTextColor(Color.parseColor("#D32F2F"))
         }
+    }
 
-        btnBack.setOnClickListener {
-            finish()
+    private fun setupButtons() {
+        btnBack.setOnClickListener { finish() }
+        btnBackToList.setOnClickListener { finish() }
+        btnEditReview.setOnClickListener { openEditReview() }
+    }
+
+    private fun openEditReview() {
+        val intent = Intent(this, AddReviewActivity::class.java).apply {
+            putExtra(AddReviewActivity.EXTRA_REVIEW_ID, this@ViewReviewActivity.intent.getLongExtra(EXTRA_REVIEW_ID, 0L))
+            putExtra(AddReviewActivity.EXTRA_TITLE, tvReviewTitle.text.toString())
+            putExtra(AddReviewActivity.EXTRA_CITY, tvReviewCity.text.toString())
+            putExtra(AddReviewActivity.EXTRA_DATE, tvReviewDate.text.toString())
+            putExtra(AddReviewActivity.EXTRA_STATUS, tvReviewStatus.text.toString())
+            putExtra(AddReviewActivity.EXTRA_COMMENT, tvReviewComment.text.toString())
         }
-
-        btnBackToList.setOnClickListener {
-            finish()
-        }
-
-        btnEditReview.setOnClickListener {
-            val intent = Intent(this, AddReviewActivity::class.java).apply {
-                putExtra(AddReviewActivity.EXTRA_REVIEW_ID, reviewId)
-                putExtra(AddReviewActivity.EXTRA_TITLE, title)
-                putExtra(AddReviewActivity.EXTRA_CITY, city)
-                putExtra(AddReviewActivity.EXTRA_DATE, date)
-                putExtra(AddReviewActivity.EXTRA_STATUS, status)
-                putExtra(AddReviewActivity.EXTRA_COMMENT, comment)
-            }
-            startActivity(intent)
-            finish()
-        }
-
-        NavigationHelper.setupBottomNav(this, NavigationHelper.TAB_REVIEWS)
+        startActivity(intent)
+        finish()
     }
 }

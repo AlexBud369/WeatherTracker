@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -14,37 +13,61 @@ class MapActivity : AppCompatActivity() {
         const val EXTRA_CITY = "extra_map_city"
     }
 
+    private lateinit var tvMapHeader: TextView
+    private lateinit var tvMapPinCity: TextView
+    private lateinit var btnBackFromMap: ImageButton
+    private lateinit var btnCloseMap: Button
+    private lateinit var btnZoomIn: FloatingActionButton
+    private lateinit var btnZoomOut: FloatingActionButton
+
+    private var zoomLevel: Int = 10
+    private var cityName: String = "Москва"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
+        bindViews()
+        loadCity()
+        setupButtons()
+    }
 
-        val cityName = intent.getStringExtra(EXTRA_CITY)?.takeIf { it.isNotBlank() } ?: "Москва"
+    private fun bindViews() {
+        tvMapHeader = findViewById(R.id.tvMapHeader)
+        tvMapPinCity = findViewById(R.id.tvMapPinCity)
+        btnBackFromMap = findViewById(R.id.btnBackFromMap)
+        btnCloseMap = findViewById(R.id.btnCloseMap)
+        btnZoomIn = findViewById(R.id.btnZoomIn)
+        btnZoomOut = findViewById(R.id.btnZoomOut)
+    }
 
-        val tvMapHeader = findViewById<TextView>(R.id.tvMapHeader)
-        val tvMapPinCity = findViewById<TextView>(R.id.tvMapPinCity)
-        val btnBackFromMap = findViewById<ImageButton>(R.id.btnBackFromMap)
-        val btnCloseMap = findViewById<Button>(R.id.btnCloseMap)
-        val btnZoomIn = findViewById<FloatingActionButton>(R.id.btnZoomIn)
-        val btnZoomOut = findViewById<FloatingActionButton>(R.id.btnZoomOut)
-
+    private fun loadCity() {
+        cityName = intent.getStringExtra(EXTRA_CITY)?.takeIf { it.isNotBlank() } ?: "Москва"
         tvMapHeader.text = "Интерактивная карта: $cityName"
-        tvMapPinCity.text = "$cityName: +18°C, Ясно"
+        updatePinText()
+    }
 
-        btnBackFromMap.setOnClickListener {
-            // Возврат назад в MainActivity
-            finish()
-        }
+    private fun setupButtons() {
+        btnBackFromMap.setOnClickListener { finish() }
+        btnCloseMap.setOnClickListener { finish() }
+        btnZoomIn.setOnClickListener { zoomIn() }
+        btnZoomOut.setOnClickListener { zoomOut() }
+    }
 
-        btnCloseMap.setOnClickListener {
-            finish()
+    private fun zoomIn() {
+        if (zoomLevel < 18) {
+            zoomLevel++
+            updatePinText()
         }
+    }
 
-        btnZoomIn.setOnClickListener {
-            Toast.makeText(this, "Масштаб увеличен (zoom in)", Toast.LENGTH_SHORT).show()
+    private fun zoomOut() {
+        if (zoomLevel > 3) {
+            zoomLevel--
+            updatePinText()
         }
+    }
 
-        btnZoomOut.setOnClickListener {
-            Toast.makeText(this, "Масштаб уменьшен (zoom out)", Toast.LENGTH_SHORT).show()
-        }
+    private fun updatePinText() {
+        tvMapPinCity.text = "$cityName: +18°C, Масштаб ${zoomLevel}x"
     }
 }

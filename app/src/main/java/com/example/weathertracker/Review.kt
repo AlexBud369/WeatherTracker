@@ -1,6 +1,7 @@
 package com.example.weathertracker
 
 import java.io.Serializable
+import java.util.concurrent.atomic.AtomicLong
 
 data class Review(
     val city: String,
@@ -8,5 +9,9 @@ data class Review(
     val status: String,
     val comment: String,
     val title: String = "Отзыв о погоде",
-    val id: Long = System.currentTimeMillis()
-) : Serializable
+    val id: Long = idGenerator.incrementAndGet()
+) : Serializable {
+    companion object {
+        private val idGenerator = AtomicLong(1000L)
+    }
+}

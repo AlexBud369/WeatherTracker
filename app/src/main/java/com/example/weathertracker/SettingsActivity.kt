@@ -25,7 +25,15 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+        bindViews()
+        setupLanguageSpinner()
+        setupThemeSwitch()
+        setupNotificationsSwitch()
+        setupSaveButton()
+        NavigationHelper.setupBottomNav(this, NavigationHelper.TAB_SETTINGS)
+    }
 
+    private fun bindViews() {
         spinnerLanguage = findViewById(R.id.spinnerLanguage)
         switchTheme = findViewById(R.id.switchTheme)
         tvThemeSubtitle = findViewById(R.id.tvThemeSubtitle)
@@ -35,33 +43,30 @@ class SettingsActivity : AppCompatActivity() {
         switchNotifications = findViewById(R.id.switchNotifications)
         tvNotificationStatus = findViewById(R.id.tvNotificationStatus)
         btnSaveSettings = findViewById(R.id.btnSaveSettings)
+    }
 
-        // Подраздел Представление: Выбор языка
+    private fun setupLanguageSpinner() {
         val languages = listOf("Русский", "English", "Deutsch")
         val langAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
         langAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerLanguage.adapter = langAdapter
+    }
 
-        // Подраздел Представление: Переключатель темы
+    private fun setupThemeSwitch() {
         switchTheme.setOnCheckedChangeListener { _, isChecked ->
             tvThemeSubtitle.text = if (isChecked) "Тёмная тема (активна)" else "Светлая тема (активна)"
         }
+    }
 
-        // Подраздел Уведомления: вкл./выкл.
+    private fun setupNotificationsSwitch() {
         switchNotifications.setOnCheckedChangeListener { _, isChecked ->
             tvNotificationStatus.text = if (isChecked) "Уведомления включены" else "Уведомления выключены"
         }
+    }
 
+    private fun setupSaveButton() {
         btnSaveSettings.setOnClickListener {
-            val selectedLang = spinnerLanguage.selectedItem.toString()
-            val tempUnit = if (rgTemperature.checkedRadioButtonId == R.id.rbCelsius) "°C" else "°F"
-            Toast.makeText(
-                this,
-                "Настройки сохранены: Язык ($selectedLang), Единицы ($tempUnit)",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Настройки сохранены", Toast.LENGTH_SHORT).show()
         }
-
-        NavigationHelper.setupBottomNav(this, NavigationHelper.TAB_SETTINGS)
     }
 }
