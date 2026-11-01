@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener {
-            supportFragmentManager.popBackStack()
+            handleBackNavigation()
         }
     }
 
@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
         currentTab = tab
         NavigationHelper.highlightTab(this, currentTab)
+        configureToolbarForFragment(targetFragment)
     }
 
     private fun createTabFragment(tab: Int): Fragment {
@@ -107,9 +108,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureToolbarForFragment(fragment: Fragment?) {
+        val hasBackStack = supportFragmentManager.backStackEntryCount > 0
         when (fragment) {
             is WeatherMainFragment -> updateToolbar("Прогноз погоды", false)
-            is ForecastFragment -> updateToolbar("Прогноз: ${WeatherAppState.currentCity}", true)
+            is ForecastFragment -> updateToolbar("Прогноз: ${WeatherAppState.currentCity}", hasBackStack)
             is ReviewsListFragment -> updateToolbar("Мои отзывы", false)
             is AddReviewFragment -> updateToolbar("Оставить отзыв", true)
             is ViewReviewFragment -> updateToolbar("Просмотр отзыва", true)
@@ -119,9 +121,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun updateForecastToolbar(cityName: String) {
+        val hasBackStack = supportFragmentManager.backStackEntryCount > 0
+        updateToolbar("Прогноз: $cityName", hasBackStack)
+    }
+
     fun updateToolbar(title: String, showBackButton: Boolean) {
         supportActionBar?.title = title
         supportActionBar?.setDisplayHomeAsUpEnabled(showBackButton)
+        if (showBackButton) {
+            toolbar.setNavigationOnClickListener { handleBackNavigation() }
+        } else {
+            toolbar.setNavigationOnClickListener(null)
+        }
+    }
+
+    private fun handleBackNavigation() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else if (currentTab != NavigationHelper.TAB_WEATHER) {
+            switchTab(NavigationHelper.TAB_WEATHER)
+        } else {
+            onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -155,7 +177,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleHomeAction(): Boolean {
-        supportFragmentManager.popBackStack()
+        handleBackNavigation()
         return true
     }
 

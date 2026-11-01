@@ -101,7 +101,7 @@ class ForecastFragment : Fragment() {
     }
 
     private fun updateCityView(cityName: String) {
-        (activity as? MainActivity)?.updateToolbar("Прогноз: $cityName", true)
+        (activity as? MainActivity)?.updateForecastToolbar(cityName)
         etDetailCitySearch.setText(cityName)
     }
 
