@@ -34,6 +34,7 @@ class WeatherMainFragment : Fragment() {
     private lateinit var tvPressure: TextView
     private lateinit var btnShowDetails: Button
     private lateinit var btnAddReview: Button
+    private lateinit var btnNetworkPosts: Button
     private lateinit var tvLatestReviewNotice: TextView
 
     private val hideNoticeRunnable = Runnable {
@@ -80,6 +81,7 @@ class WeatherMainFragment : Fragment() {
         tvPressure = view.findViewById(R.id.tvPressure)
         btnShowDetails = view.findViewById(R.id.btnShowDetails)
         btnAddReview = view.findViewById(R.id.btnAddReview)
+        btnNetworkPosts = view.findViewById(R.id.btnNetworkPosts)
         tvLatestReviewNotice = view.findViewById(R.id.tvLatestReviewNotice)
     }
 
@@ -129,6 +131,10 @@ class WeatherMainFragment : Fragment() {
         btnAddReview.setOnClickListener {
             val addReviewFragment = AddReviewFragment.newInstance(city = WeatherAppState.currentCity)
             (activity as? MainActivity)?.openFragment(addReviewFragment, addToBackStack = true)
+        }
+        btnNetworkPosts.setOnClickListener {
+            val postListFragment = PostListFragment.newInstance()
+            (activity as? MainActivity)?.openFragment(postListFragment, addToBackStack = true)
         }
         cardMapPreview.setOnClickListener {
             val mapFragment = MapFragment.newInstance(WeatherAppState.currentCity)

@@ -85,21 +85,28 @@
 | Требование / Тема работы | Файл | Класс / Функция / Разметка | Пояснение, что показать преподавателю |
 |---|---|---|---|
 | **Подключение зависимостей Room** | `build.gradle.kts` | `dependencies { implementation("androidx.room:room-runtime:2.6.1") ... }` | Подключение библиотек Room Runtime, Room KTX и процессора аннотаций Room Compiler. |
-| **Сущность базы данных (Entity)** | `Review.kt` | `@Entity(tableName = "reviews") data class Review` | Класс сущности с полями таблицы. Первичный ключ `@PrimaryKey(autoGenerate = true) val id: Long = 0L`. |
-| **Интерфейс доступа к данным (DAO)** | `ReviewDao.kt` | `@Dao interface ReviewDao` | Интерфейс с CRUD-методами: `@Query`, `@Insert`, `@Update`, `@Delete`. |
-| **Реактивный поток данных (Flow)** | `ReviewDao.kt`, `ReviewsListFragment.kt` | `fun getAllReviews(): Flow<List<Review>>`, `observeReviewsFromDatabase()` | Использование `Flow` от Room: UI автоматически перерисовывается при любых изменениях в БД через `Flow.collect`. |
-| **Асинхронные suspend-функции** | `ReviewDao.kt` | `suspend fun insertReview(...)`, `suspend fun deleteReview(...)` | Все операции записи и чтения помечены `suspend` и выполняются вне главного потока через корутины. |
-| **Класс базы данных (RoomDatabase)** | `AppDatabase.kt` | `@Database(entities = [Review::class], version = 1) abstract class AppDatabase` | Наследник `RoomDatabase` с абстрактным методом `reviewDao()` и потокобезопасным синглтоном `getDatabase()`. |
+| **Сущность базы данных (Entity)** | `Review.java` | `@Entity(tableName = "reviews") public class Review` | Класс сущности с полями таблицы. Первичный ключ `@PrimaryKey(autoGenerate = true) private long id`. |
+| **Интерфейс доступа к данным (DAO)** | `ReviewDao.java` | `@Dao public interface ReviewDao` | Интерфейс с CRUD-методами: `@Query`, `@Insert`, `@Update`, `@Delete`. |
+| **Реактивный поток данных (Flow)** | `ReviewRepository.kt`, `ReviewsListFragment.kt` | `fun getReviewsFlow(): Flow<List<Review>>`, `observeReviewsFromDatabase()` | Использование `Flow`: UI автоматически перерисовывается при любых изменениях в БД через `Flow.collect`. |
+| **Асинхронные suspend-функции** | `ReviewRepository.kt` | `suspend fun addReview(...)`, `suspend fun removeReview(...)` | Все операции записи и чтения выполняются вне главного потока через корутины в контексте `Dispatchers.IO`. |
+| **Класс базы данных (RoomDatabase)** | `AppDatabase.java` | `@Database(entities = {Review.class}, version = 1) public abstract class AppDatabase` | Наследник `RoomDatabase` с абстрактным методом `reviewDao()` и потокобезопасным синглтоном `getDatabase()`. |
 | **Инициализация базы данных** | `MainActivity.kt` | `onCreate()` | Вызов `ReviewRepository.init(this)`, создающий экземпляр `AppDatabase` через `Room.databaseBuilder`. |
-| **Изоляция работы с БД в репозитории** | `ReviewRepository.kt` | `addReview()`, `removeReview()`, `updateReview()`, `getReviews()` | Репозиторий перенаправляет вызовы в `ReviewDao` в контексте `Dispatchers.IO`. |
 | **Асинхронное сохранение из Fragment** | `AddReviewFragment.kt` | `saveReview()` | Запуск корутины `viewLifecycleOwner.lifecycleScope.launch` для асинхронного сохранения отзыва в Room перед закрытием экрана. |
 | **Асинхронное удаление из Fragment** | `ReviewsListFragment.kt` | `deleteReviewFromDatabase()` | Удаление записи из Room в корутине `lifecycleScope.launch` с мгновенным реактивным обновлением UI. |
 
 ---
 
-## 📌 Будущие лабораторные работы (шпаргалка для расширения)
+## 📌 Лабораторная работа №13: «Работа с сетью: Retrofit + JSON» (ветка `lab13`)
 
-### Лабораторная работа №13: «Работа с сетью и API: Retrofit»
-- **Интерфейс API:** Описание эндпоинтов `@GET`, `@POST` с аннотациями Retrofit.
-- **Модели данных (DTO):** Data-классы для парсинга ответов серверов погоды (OpenWeatherMap, WeatherAPI).
-- **Retrofit Client:** Конфигурация `Retrofit.Builder().baseUrl(...).addConverterFactory(GsonConverterFactory.create()).build()`.
+| Требование / Тема работы | Файл | Класс / Функция / Разметка | Пояснение, что показать преподавателю |
+|---|---|---|---|
+| **Разрешение на доступ в интернет** | `AndroidManifest.xml` | `<uses-permission android:name="android.permission.INTERNET" />` | Системное разрешение на выполнение HTTP/HTTPS сетевых запросов в Android. |
+| **Подключение Retrofit и Converter-Gson** | `build.gradle.kts` | `implementation("com.squareup.retrofit2:retrofit:2.11.0")`, `converter-gson` | Библиотеки Retrofit для REST API и конвертер Gson для автоматического парсинга JSON. |
+| **Модель данных сетевого ответа (DTO)** | `Post.kt` | `data class Post(userId, id, title, body)` | Модель данных, строго соответствующая структуре JSON-ответа с API JSONPlaceholder. |
+| **Интерфейс API с эндпоинтом** | `JsonPlaceholderApi.kt` | `@GET("posts") suspend fun getPosts(): List<Post>` | Описание HTTP-запроса через аннотацию `@GET("posts")` с `suspend` для вызова из корутин. |
+| **Синглтон инициализации Retrofit** | `ApiService.kt` | `createRetrofitApi()`, `baseUrl("https://jsonplaceholder.typicode.com/")` | Настройка Retrofit: базовый URL, фабрика `GsonConverterFactory.create()` и ленивое создание API. |
+| **Асинхронный сетевой запрос в корутине** | `PostListFragment.kt` | `loadPosts()` | Запуск корутины `viewLifecycleOwner.lifecycleScope.launch`, вызов `ApiService.api.getPosts()` в блоке `try-catch`. |
+| **Обработка состояний Loading / Error / Success** | `PostListFragment.kt` | `showLoadingState()`, `showErrorState()`, `showSuccessState()` | Показ `ProgressBar` при загрузке, сообщения об ошибке при сбое и списка при успешном ответе. |
+| **Обработка отсутствия интернета** | `PostListFragment.kt` | `showErrorState(exception)` | Перехват `IOException` (режим «В самолёте», нет Wi-Fi/связи) с выводом кнопки «Повторить попытку». |
+| **Отображение сетевых данных в списке** | `PostAdapter.kt`, `item_post.xml` | `PostViewHolder`, `bindPostData()`, `updateList()` | Кастомный адаптер и разметка `MaterialCardView` для отображения постов в `RecyclerView`. |
+| **Интеграция сетевого экрана в навигацию** | `main_menu.xml`, `MainActivity.kt`, `WeatherMainFragment.kt` | `action_posts`, `btnNetworkPosts` | Доступ к экрану через меню шапки Toolbar и кнопку на главном экране с поддержкой возврата «Назад». |
