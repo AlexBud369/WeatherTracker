@@ -118,7 +118,7 @@ class MapFragment : Fragment() {
     private fun buildMapScript(lat: Double, lon: Double, zoom: Int, city: String, temp: String): String {
         return """
             <script>
-                var map = L.map('map', { zoomControl: false }).setView([$lat, $lon], $zoom);
+                var map = L.map('map', { zoomControl: true }).setView([$lat, $lon], $zoom);
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }).addTo(map);
                 L.marker([$lat, $lon]).addTo(map).bindPopup('<b>$city</b><br>$temp').openPopup();
                 fetch('https://api.rainviewer.com/public/weather-maps.json')
@@ -126,7 +126,11 @@ class MapFragment : Fragment() {
                     .then(function(d) {
                         var p = d.radar && d.radar.past;
                         if (p && p.length > 0) {
-                            L.tileLayer('https://tilecache.rainviewer.com' + p[p.length - 1].path + '/256/{z}/{x}/{y}/2/1_1.png', { opacity: 0.65, maxZoom: 19 }).addTo(map);
+                            L.tileLayer('https://tilecache.rainviewer.com' + p[p.length - 1].path + '/256/{z}/{x}/{y}/2/1_1.png', {
+                                opacity: 0.65,
+                                maxNativeZoom: 7,
+                                maxZoom: 19
+                            }).addTo(map);
                         }
                     }).catch(function() {});
             </script>
