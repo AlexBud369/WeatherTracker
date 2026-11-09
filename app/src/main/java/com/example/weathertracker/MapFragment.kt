@@ -80,12 +80,20 @@ class MapFragment : Fragment() {
     private fun setupWebView() {
         webViewMap.settings.javaScriptEnabled = true
         webViewMap.settings.domStorageEnabled = true
+        webViewMap.settings.userAgentString = "WeatherTrackerApp/1.0 (Android Mobile)"
         webViewMap.webViewClient = WebViewClient()
-        val html = buildMapHtml(latitude, longitude, zoomLevel, currentCity)
-        webViewMap.loadDataWithBaseURL("https://openstreetmap.org", html, "text/html", "UTF-8", null)
+        val temp = getCurrentTempString()
+        val html = buildMapHtml(latitude, longitude, zoomLevel, currentCity, temp)
+        webViewMap.loadDataWithBaseURL("https://basemaps.cartocdn.com", html, "text/html", "UTF-8", null)
     }
 
-    private fun buildMapHtml(lat: Double, lon: Double, zoom: Int, city: String): String {
+    private fun getCurrentTempString(): String {
+        return WeatherRepository.latestForecast?.current?.temperature?.let {
+            WeatherMapper.formatTemperature(it)
+        } ?: "+18°C"
+    }
+
+    private fun buildMapHtml(lat: Double, lon: Double, zoom: Int, city: String, temp: String): String {
         return """
             <!DOCTYPE html>
             <html>
@@ -102,8 +110,11 @@ class MapFragment : Fragment() {
                 <div id="map"></div>
                 <script>
                     var map = L.map('map', { zoomControl: false }).setView([$lat, $lon], $zoom);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-                    L.marker([$lat, $lon]).addTo(map).bindPopup('$city').openPopup();
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                        subdomains: 'abcd',
+                        maxZoom: 19
+                    }).addTo(map);
+                    L.marker([$lat, $lon]).addTo(map).bindPopup('<b>$city</b><br>$temp').openPopup();
                 </script>
             </body>
             </html>
@@ -127,7 +138,7 @@ class MapFragment : Fragment() {
     }
 
     private fun updatePinText() {
-        val temp = WeatherRepository.latestForecast?.current?.temperature?.let { WeatherMapper.formatTemperature(it) } ?: "+18°C"
+        val temp = getCurrentTempString()
         tvMapPinCity.text = "$currentCity: $temp (${latitude.format(2)}, ${longitude.format(2)}) [${zoomLevel}x]"
     }
 

@@ -17,6 +17,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ForecastFragment : Fragment() {
 
@@ -90,7 +93,7 @@ class ForecastFragment : Fragment() {
             WeatherAppState.currentCity = searchedCity
             updateCityView(WeatherAppState.currentCity)
             hideKeyboard()
-            loadForecast(searchedCity)
+            fetchForecastData(searchedCity)
         }
     }
 
@@ -143,13 +146,16 @@ class ForecastFragment : Fragment() {
         val times = hourly?.time ?: return
         val temps = hourly.temperature ?: return
         val codes = hourly.weatherCode ?: return
-        val count = minOf(24, times.size, temps.size, codes.size)
+        val currentPrefix = SimpleDateFormat("yyyy-MM-dd'T'HH", Locale.getDefault()).format(Date())
+        val startIndex = times.indexOfFirst { it.startsWith(currentPrefix) }.let { if (it >= 0) it else 0 }
+        val count = minOf(24, times.size - startIndex, temps.size - startIndex, codes.size - startIndex)
         val inflater = LayoutInflater.from(requireContext())
         for (i in 0 until count) {
+            val idx = startIndex + i
             val itemView = inflater.inflate(R.layout.item_hourly_weather, layoutHourlyContainer, false)
-            itemView.findViewById<TextView>(R.id.tvHourlyTime).text = WeatherMapper.formatHour(times[i])
-            itemView.findViewById<TextView>(R.id.tvHourlyIcon).text = WeatherMapper.getWeatherEmoji(codes[i])
-            itemView.findViewById<TextView>(R.id.tvHourlyTemp).text = WeatherMapper.formatTemperature(temps[i])
+            itemView.findViewById<TextView>(R.id.tvHourlyTime).text = WeatherMapper.formatHour(times[idx])
+            itemView.findViewById<TextView>(R.id.tvHourlyIcon).text = WeatherMapper.getWeatherEmoji(codes[idx])
+            itemView.findViewById<TextView>(R.id.tvHourlyTemp).text = WeatherMapper.formatTemperature(temps[idx])
             layoutHourlyContainer.addView(itemView)
         }
     }
@@ -160,20 +166,38 @@ class ForecastFragment : Fragment() {
         val maxTemps = daily.maxTemp ?: return
         val minTemps = daily.minTemp ?: return
         val codes = daily.weatherCode ?: return
+        val winds = daily.maxWindSpeed
+        val probs = daily.precipitationProbability
         val count = minOf(dates.size, maxTemps.size, minTemps.size, codes.size)
         val inflater = LayoutInflater.from(requireContext())
         for (i in 0 until count) {
             val itemView = inflater.inflate(R.layout.item_weekly_weather, layoutWeeklyContainer, false)
-            bindWeeklyItem(itemView, dates[i], maxTemps[i], minTemps[i], codes[i])
+            val wind = winds?.getOrNull(i)
+            val prob = probs?.getOrNull(i)
+            bindWeeklyItem(itemView, dates[i], maxTemps[i], minTemps[i], codes[i], wind, prob)
             layoutWeeklyContainer.addView(itemView)
         }
     }
 
-    private fun bindWeeklyItem(view: View, date: String, max: Double, min: Double, code: Int) {
+    private fun bindWeeklyItem(
+        view: View,
+        date: String,
+        max: Double,
+        min: Double,
+        code: Int,
+        wind: Double?,
+        prob: Int?
+    ) {
         view.findViewById<TextView>(R.id.tvWeeklyDate).text = WeatherMapper.formatDay(date)
         view.findViewById<TextView>(R.id.tvWeeklyTemp).text =
             "${WeatherMapper.formatTemperature(max)} / ${WeatherMapper.formatTemperature(min)}"
         view.findViewById<TextView>(R.id.tvWeeklyPrecipitation).text =
             "Осадки: ${WeatherMapper.getWeatherDescription(code)}"
+        val windText = wind?.let { WeatherMapper.formatWindSpeed(it) } ?: "3.5 м/с"
+        view.findViewById<TextView>(R.id.tvWeeklyWind).text = "💨 $windText"
+        val probText = prob?.let { "$it%" } ?: "20%"
+        view.findViewById<TextView>(R.id.tvWeeklyHumidity).text = "💧 $probText"
+        val pressure = WeatherRepository.latestForecast?.current?.surfacePressure?.let { WeatherMapper.formatPressure(it) } ?: "752 мм"
+        view.findViewById<TextView>(R.id.tvWeeklyPressure).text = "⏱ $pressure"
     }
 }
