@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         AppPreferences.init(this)
         ReviewRepository.init(this)
+        NotificationHelper.createNotificationChannel(this)
         WeatherAppState.currentCity = AppPreferences.getLastCity()
         setupToolbar()
         setupNavigationListeners()

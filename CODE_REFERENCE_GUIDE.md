@@ -110,3 +110,19 @@
 | **Асинхронная загрузка на главном экране** | `WeatherMainFragment.kt` | `loadWeatherData(cityName: String)`, `viewLifecycleOwner.lifecycleScope.launch` | Вызов репозитория в корутине, отображение `progressBarWeather`, обновление реальных показателей и обработка ошибок сети (Toast). |
 | **Почасовой и недельный прогноз из сети** | `ForecastFragment.kt` | `populateHourlyForecast()`, `populateWeeklyForecast()`, `progressBarForecast` | Динамическое построение карточек почасового прогноза на 24 часа и прогноза на 7 дней на основе данных сетевого ответа. |
 | **Интерактивная карта с реальными координатами** | `MapFragment.kt`, `fragment_map.xml` | `setupWebView()`, `buildMapHtml()`, `zoomIn()`, `zoomOut()`, `tvMapPinCity` | Отображение интерактивной карты OpenStreetMap в `WebView` по реальным координатам `(latitude, longitude)` города с меткой погоды и зумом. |
+
+---
+
+## 📌 Лабораторная работа №14: «Уведомления и работа в фоне (WorkManager)» (ветка `lab14`)
+
+| Требование / Тема работы | Файл | Класс / Функция / Разметка | Пояснение, что показать преподавателю |
+|---|---|---|---|
+| **Подключение WorkManager** | `build.gradle.kts` | `implementation("androidx.work:work-runtime-ktx:2.9.1")` | Подключение библиотеки Jetpack WorkManager для гарантированного выполнения фоновых задач. |
+| **Разрешение на показ уведомлений** | `AndroidManifest.xml` | `<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />` | Системное разрешение для Android 13+ (API 33+), необходимое для показа уведомлений в шторке. |
+| **Создание канала уведомлений (API 26+)** | `NotificationHelper.kt` | `createNotificationChannel(context: Context)` | Создание `NotificationChannel` с `IMPORTANCE_HIGH` и регистрация в `NotificationManager`. Вызывается в `MainActivity.onCreate`. |
+| **Отправка системного уведомления** | `NotificationHelper.kt` | `showWeatherNotification()`, `createPendingIntent()` | Формирование `NotificationCompat.Builder` с иконкой, стилем `BigTextStyle` и `PendingIntent` для открытия `MainActivity` по клику. |
+| **Фоновый исполнитель (CoroutineWorker)** | `WeatherNotificationWorker.kt` | `class WeatherNotificationWorker : CoroutineWorker` | Исполнитель фоновой задачи, который в `doWork()` получает сохраненный город, запрашивает сводку погоды и отправляет уведомление. |
+| **Однократная отложенная задача (10 сек)** | `SettingsFragment.kt` | `scheduleOneTimeNotification()` | Создание `OneTimeWorkRequestBuilder<WeatherNotificationWorker>()` с `setInitialDelay(10, TimeUnit.SECONDS)` и постановка в очередь через `WorkManager.enqueue()`. |
+| **Периодическая фоновая синхронизация** | `SettingsFragment.kt` | `updatePeriodicWork(enabled: Boolean)` | Планирование `PeriodicWorkRequestBuilder` с интервалом 2 часа и ограничением `NetworkType.CONNECTED` через `enqueueUniquePeriodicWork`. |
+| **Рантайм-запрос разрешения на уведомления** | `SettingsFragment.kt` | `permissionLauncher`, `checkNotificationPermission()` | Проверка и запрос разрешения через `ActivityResultContracts.RequestPermission()` на устройствах с Android 13+. |
+| **Интерфейс управления уведомлениями** | `fragment_settings.xml`, `SettingsFragment.kt` | `btnTestNotification`, `switchNotifications` | Кнопка «Тест уведомления (через 10 сек)» и тумблер включения/выключения периодической фоновой синхронизации. |

@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="#F8FAFC">
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +17,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- ПОДРАЗДЕЛ: ПРЕДСТАВЛЕНИЕ -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,7 +42,6 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <!-- Язык -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -66,7 +63,6 @@
                         android:layout_marginVertical="12dp"
                         android:background="#F1F5F9" />
 
-                    <!-- Тема: Переключатель -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -104,7 +100,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ПОДРАЗДЕЛ: ПОГОДА -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -131,7 +126,6 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <!-- Температура: Цельсий / Фаренгейт -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -171,7 +165,6 @@
                         android:layout_marginVertical="10dp"
                         android:background="#F1F5F9" />
 
-                    <!-- Скорость ветра: м/с, км/ч, миль/ч -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -216,7 +209,6 @@
                         android:layout_marginVertical="10dp"
                         android:background="#F1F5F9" />
 
-                    <!-- Атмосферное давление -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -257,7 +249,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ПОДРАЗДЕЛ: УВЕДОМЛЕНИЯ -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -281,42 +272,56 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-                        <TextView
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Уведомления о погоде"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="#334155" />
+
+                            <TextView
+                                android:id="@+id/tvNotificationStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="вкл. / выкл"
+                                android:textSize="12sp"
+                                android:textColor="#64748B" />
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchNotifications"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Уведомления о погоде"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="#334155" />
-
-                        <TextView
-                            android:id="@+id/tvNotificationStatus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="вкл. / выкл"
-                            android:textSize="12sp"
-                            android:textColor="#64748B" />
+                            android:checked="true" />
                     </LinearLayout>
 
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switchNotifications"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true" />
+                    <Button
+                        android:id="@+id/btnTestNotification"
+                        android:layout_width="match_parent"
+                        android:layout_height="46dp"
+                        android:layout_marginTop="12dp"
+                        android:text="Тест уведомления (через 10 сек)"
+                        android:textSize="13sp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Кнопка сохранения настроек -->
             <Button
                 android:id="@+id/btnSaveSettings"
                 android:layout_width="match_parent"

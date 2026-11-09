@@ -1,5 +1,7 @@
 package com.example.weathertracker
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,15 +13,21 @@ import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import java.util.concurrent.TimeUnit
 
 class SettingsFragment : Fragment() {
 
     companion object {
-        fun newInstance(): SettingsFragment {
-            return SettingsFragment()
-        }
+        fun newInstance(): SettingsFragment = SettingsFragment()
     }
 
     private lateinit var spinnerLanguage: Spinner
@@ -30,7 +38,16 @@ class SettingsFragment : Fragment() {
     private lateinit var rbFahrenheit: RadioButton
     private lateinit var switchNotifications: SwitchCompat
     private lateinit var tvNotificationStatus: TextView
+    private lateinit var btnTestNotification: Button
     private lateinit var btnSaveSettings: Button
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Toast.makeText(requireContext(), "Разрешение на показ уведомлений получено", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +63,6 @@ class SettingsFragment : Fragment() {
         setupLanguageSpinner()
         loadSavedPreferences()
         setupListeners()
-        setupSaveButton()
     }
 
     private fun bindViews(view: View) {
@@ -58,6 +74,7 @@ class SettingsFragment : Fragment() {
         rbFahrenheit = view.findViewById(R.id.rbFahrenheit)
         switchNotifications = view.findViewById(R.id.switchNotifications)
         tvNotificationStatus = view.findViewById(R.id.tvNotificationStatus)
+        btnTestNotification = view.findViewById(R.id.btnTestNotification)
         btnSaveSettings = view.findViewById(R.id.btnSaveSettings)
     }
 
@@ -87,6 +104,50 @@ class SettingsFragment : Fragment() {
         }
         switchNotifications.setOnCheckedChangeListener { _, isChecked ->
             updateNotificationSubtitle(isChecked)
+            updatePeriodicWork(isChecked)
+        }
+        btnTestNotification.setOnClickListener {
+            scheduleOneTimeNotification()
+        }
+        btnSaveSettings.setOnClickListener {
+            saveCurrentPreferences()
+        }
+    }
+
+    private fun scheduleOneTimeNotification() {
+        checkNotificationPermission()
+        val request = OneTimeWorkRequestBuilder<WeatherNotificationWorker>()
+            .setInitialDelay(10, TimeUnit.SECONDS)
+            .build()
+        WorkManager.getInstance(requireContext()).enqueue(request)
+        Toast.makeText(
+            requireContext(),
+            "Уведомление придет через 10 секунд. Закройте приложение для проверки!",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    private fun updatePeriodicWork(enabled: Boolean) {
+        val manager = WorkManager.getInstance(requireContext())
+        if (enabled) {
+            checkNotificationPermission()
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+            val periodicRequest = PeriodicWorkRequestBuilder<WeatherNotificationWorker>(2, TimeUnit.HOURS)
+                .setConstraints(constraints)
+                .build()
+            manager.enqueueUniquePeriodicWork("weather_sync", ExistingPeriodicWorkPolicy.UPDATE, periodicRequest)
+        } else {
+            manager.cancelUniqueWork("weather_sync")
+        }
+    }
+
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!NotificationHelper.hasNotificationPermission(requireContext())) {
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
 
@@ -98,18 +159,12 @@ class SettingsFragment : Fragment() {
         tvNotificationStatus.text = if (isChecked) "Уведомления включены" else "Уведомления выключены"
     }
 
-    private fun setupSaveButton() {
-        btnSaveSettings.setOnClickListener {
-            saveCurrentPreferences()
-            Toast.makeText(requireContext(), "Настройки сохранены в SharedPreferences", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun saveCurrentPreferences() {
         AppPreferences.saveDarkTheme(switchTheme.isChecked)
         AppPreferences.saveNotifications(switchNotifications.isChecked)
         AppPreferences.saveLanguageIndex(spinnerLanguage.selectedItemPosition)
         val tempUnit = if (rbFahrenheit.isChecked) "°F" else "°C"
         AppPreferences.saveTemperatureUnit(tempUnit)
+        Toast.makeText(requireContext(), "Настройки сохранены", Toast.LENGTH_SHORT).show()
     }
 }
