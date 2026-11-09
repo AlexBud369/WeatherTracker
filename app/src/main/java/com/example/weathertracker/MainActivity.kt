@@ -120,7 +120,6 @@ class MainActivity : AppCompatActivity() {
             is ViewReviewFragment -> updateToolbar("Просмотр отзыва", true)
             is SettingsFragment -> updateToolbar("Настройки", false)
             is MapFragment -> updateToolbar("Интерактивная карта", true)
-            is PostListFragment -> updateToolbar("Сетевые данные (Retrofit)", true)
             else -> updateToolbar("Прогноз погоды", false)
         }
     }
@@ -158,7 +157,6 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_add -> handleAddAction()
-            R.id.action_posts -> handlePostsAction()
             R.id.action_settings -> handleSettingsAction()
             R.id.action_about -> handleAboutAction()
             android.R.id.home -> handleHomeAction()
@@ -168,11 +166,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleAddAction(): Boolean {
         openFragment(AddReviewFragment.newInstance(), addToBackStack = true)
-        return true
-    }
-
-    private fun handlePostsAction(): Boolean {
-        openFragment(PostListFragment.newInstance(), addToBackStack = true)
         return true
     }
 

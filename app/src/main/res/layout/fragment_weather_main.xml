@@ -54,10 +54,18 @@
                     android:backgroundTint="#1E88E5" />
             </LinearLayout>
 
+            <ProgressBar
+                android:id="@+id/progressBarWeather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" />
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
                 app:strokeWidth="1dp"
@@ -143,11 +151,12 @@
                                 android:textColor="#475569" />
 
                             <TextView
+                                android:id="@+id/tvWeatherDataSource"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Комфортная влажность"
+                                android:text="Онлайн: Open-Meteo API"
                                 android:textSize="12sp"
-                                android:textColor="#94A3B8" />
+                                android:textColor="#0284C7" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -197,7 +206,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Нажмите для увеличения поверх экрана"
+                            android:text="Нажмите для открытия карты погоды"
                             android:textColor="#0284C7"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -363,18 +372,6 @@
                 android:textSize="15sp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:icon="@drawable/ic_add"
-                app:iconGravity="textStart" />
-
-            <Button
-                android:id="@+id/btnNetworkPosts"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="8dp"
-                android:text="Сетевые сводки (Retrofit API)"
-                android:textSize="15sp"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:textColor="#0284C7"
-                app:icon="@drawable/ic_forecast"
                 app:iconGravity="textStart" />
 
             <TextView

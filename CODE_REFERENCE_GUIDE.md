@@ -96,17 +96,17 @@
 
 ---
 
-## 📌 Лабораторная работа №13: «Работа с сетью: Retrofit + JSON» (ветка `lab13`)
+## 📌 Лабораторная работа №13: «Работа с сетью: Retrofit + JSON (Реальное Weather API и Интерактивная карта)» (ветка `lab13`)
 
 | Требование / Тема работы | Файл | Класс / Функция / Разметка | Пояснение, что показать преподавателю |
 |---|---|---|---|
-| **Разрешение на доступ в интернет** | `AndroidManifest.xml` | `<uses-permission android:name="android.permission.INTERNET" />` | Системное разрешение на выполнение HTTP/HTTPS сетевых запросов в Android. |
-| **Подключение Retrofit и Converter-Gson** | `build.gradle.kts` | `implementation("com.squareup.retrofit2:retrofit:2.11.0")`, `converter-gson` | Библиотеки Retrofit для REST API и конвертер Gson для автоматического парсинга JSON. |
-| **Модель данных сетевого ответа (DTO)** | `Post.kt` | `data class Post(userId, id, title, body)` | Модель данных, строго соответствующая структуре JSON-ответа с API JSONPlaceholder. |
-| **Интерфейс API с эндпоинтом** | `JsonPlaceholderApi.kt` | `@GET("posts") suspend fun getPosts(): List<Post>` | Описание HTTP-запроса через аннотацию `@GET("posts")` с `suspend` для вызова из корутин. |
-| **Синглтон инициализации Retrofit** | `ApiService.kt` | `createRetrofitApi()`, `baseUrl("https://jsonplaceholder.typicode.com/")` | Настройка Retrofit: базовый URL, фабрика `GsonConverterFactory.create()` и ленивое создание API. |
-| **Асинхронный сетевой запрос в корутине** | `PostListFragment.kt` | `loadPosts()` | Запуск корутины `viewLifecycleOwner.lifecycleScope.launch`, вызов `ApiService.api.getPosts()` в блоке `try-catch`. |
-| **Обработка состояний Loading / Error / Success** | `PostListFragment.kt` | `showLoadingState()`, `showErrorState()`, `showSuccessState()` | Показ `ProgressBar` при загрузке, сообщения об ошибке при сбое и списка при успешном ответе. |
-| **Обработка отсутствия интернета** | `PostListFragment.kt` | `showErrorState(exception)` | Перехват `IOException` (режим «В самолёте», нет Wi-Fi/связи) с выводом кнопки «Повторить попытку». |
-| **Отображение сетевых данных в списке** | `PostAdapter.kt`, `item_post.xml` | `PostViewHolder`, `bindPostData()`, `updateList()` | Кастомный адаптер и разметка `MaterialCardView` для отображения постов в `RecyclerView`. |
-| **Интеграция сетевого экрана в навигацию** | `main_menu.xml`, `MainActivity.kt`, `WeatherMainFragment.kt` | `action_posts`, `btnNetworkPosts` | Доступ к экрану через меню шапки Toolbar и кнопку на главном экране с поддержкой возврата «Назад». |
+| **Разрешение на доступ в интернет** | `AndroidManifest.xml` | `<uses-permission android:name="android.permission.INTERNET" />` | Системное разрешение на выполнение HTTP/HTTPS сетевых запросов и загрузку картографических тайлов. |
+| **Подключение Retrofit и Converter-Gson** | `build.gradle.kts` | `implementation("com.squareup.retrofit2:retrofit:2.11.0")`, `converter-gson` | Библиотеки Retrofit для REST API и конвертер Gson для автоматической десериализации JSON в Kotlin-объекты. |
+| **Модели данных ответа (DTO)** | `WeatherModels.kt` | `GeocodingResponse`, `GeocodingCity`, `ForecastResponse`, `CurrentWeatherDto`, `HourlyWeatherDto`, `DailyWeatherDto` | Kotlin `data class` с аннотациями `@SerializedName`, строго повторяющие структуру JSON Open-Meteo. |
+| **Интерфейс API с эндпоинтами** | `WeatherApi.kt` | `@GET searchCity(...)`, `@GET("v1/forecast") suspend fun getForecast(...)` | Типобезопасные сетевые запросы: геокодинг города в координаты и получение прогноза с `suspend` для корутин. |
+| **Синглтон инициализации Retrofit** | `WeatherApiClient.kt` | `object WeatherApiClient`, `baseUrl("https://api.open-meteo.com/")` | Настройка клиента Retrofit: базовый URL, фабрика конвертера `GsonConverterFactory.create()`, ленивое свойство `service`. |
+| **Сетевой репозиторий с обработкой ошибок** | `WeatherRepository.kt` | `suspend fun loadWeather(cityName: String): Result<Pair<...>>` | Выполнение сетевых запросов в пуле `Dispatchers.IO`, валидация ответа геокодинга, кеширование и возврат `Result`. |
+| **Маппинг WMO кодов погоды и единиц** | `WeatherMapper.kt` | `getWeatherDescription()`, `formatTemperature()`, `formatWindSpeed()`, `formatPressure()` | Преобразование международных кодов WMO в понятный текст и эмодзи, конвертация давления (гПа -> мм рт. ст.) и скорости ветра (км/ч -> м/с). |
+| **Асинхронная загрузка на главном экране** | `WeatherMainFragment.kt` | `loadWeatherData(cityName: String)`, `viewLifecycleOwner.lifecycleScope.launch` | Вызов репозитория в корутине, отображение `progressBarWeather`, обновление реальных показателей и обработка ошибок сети (Toast). |
+| **Почасовой и недельный прогноз из сети** | `ForecastFragment.kt` | `populateHourlyForecast()`, `populateWeeklyForecast()`, `progressBarForecast` | Динамическое построение карточек почасового прогноза на 24 часа и прогноза на 7 дней на основе данных сетевого ответа. |
+| **Интерактивная карта с реальными координатами** | `MapFragment.kt`, `fragment_map.xml` | `setupWebView()`, `buildMapHtml()`, `zoomIn()`, `zoomOut()`, `tvMapPinCity` | Отображение интерактивной карты OpenStreetMap в `WebView` по реальным координатам `(latitude, longitude)` города с меткой погоды и зумом. |

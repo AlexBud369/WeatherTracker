@@ -6,43 +6,38 @@
     android:orientation="vertical"
     android:background="#0F172A">
 
-
-    <!-- Карта во весь экран -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_map_placeholder">
+        android:layout_weight="1">
 
-        <!-- Слой радара и метка города -->
+        <WebView
+            android:id="@+id/webViewMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
             android:gravity="center"
             android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_location"
-                android:contentDescription="Маркер" />
 
             <TextView
                 android:id="@+id/tvMapPinCity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="#80000000"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
+                android:background="#D00F172A"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
                 android:text="Москва: +18°C, Ясно"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <!-- Кнопки зума -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,7 +69,6 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <!-- Нижняя панель карты -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -85,7 +79,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Слой: Радар осадков и ветровых потоков"
+            android:text="Слой: Интерактивная карта OpenStreetMap и радар погоды"
             android:textColor="#94A3B8"
             android:textSize="13sp" />
 
@@ -98,5 +92,4 @@
             android:textSize="14sp"
             android:backgroundTint="#1E88E5" />
     </LinearLayout>
-
 </LinearLayout>

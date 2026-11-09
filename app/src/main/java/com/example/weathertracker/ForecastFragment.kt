@@ -11,8 +11,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class ForecastFragment : Fragment() {
 
@@ -31,6 +35,7 @@ class ForecastFragment : Fragment() {
 
     private lateinit var etDetailCitySearch: EditText
     private lateinit var btnDetailSearch: Button
+    private lateinit var progressBarForecast: ProgressBar
     private lateinit var layoutHourlyContainer: LinearLayout
     private lateinit var layoutWeeklyContainer: LinearLayout
 
@@ -47,13 +52,13 @@ class ForecastFragment : Fragment() {
         bindViews(view)
         readCityArgument()
         setupListeners()
-        populateHourlyForecast()
-        populateWeeklyForecast()
+        loadForecast(WeatherAppState.currentCity)
     }
 
     private fun bindViews(view: View) {
         etDetailCitySearch = view.findViewById(R.id.etDetailCitySearch)
         btnDetailSearch = view.findViewById(R.id.btnDetailSearch)
+        progressBarForecast = view.findViewById(R.id.progressBarForecast)
         layoutHourlyContainer = view.findViewById(R.id.layoutHourlyContainer)
         layoutWeeklyContainer = view.findViewById(R.id.layoutWeeklyContainer)
     }
@@ -67,9 +72,7 @@ class ForecastFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        btnDetailSearch.setOnClickListener {
-            performSearch()
-        }
+        btnDetailSearch.setOnClickListener { performSearch() }
         etDetailCitySearch.setOnEditorActionListener { _, actionId, event ->
             val isEnterKey = event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE || isEnterKey) {
@@ -81,17 +84,13 @@ class ForecastFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        updateCityView(WeatherAppState.currentCity)
-    }
-
     private fun performSearch() {
         val searchedCity = etDetailCitySearch.text.toString().trim()
         if (searchedCity.isNotEmpty()) {
             WeatherAppState.currentCity = searchedCity
             updateCityView(WeatherAppState.currentCity)
             hideKeyboard()
+            loadForecast(searchedCity)
         }
     }
 
@@ -105,55 +104,76 @@ class ForecastFragment : Fragment() {
         etDetailCitySearch.setText(cityName)
     }
 
-    private fun populateHourlyForecast() {
+    private fun loadForecast(cityName: String) {
+        val cached = WeatherRepository.latestForecast
+        val cachedCity = WeatherRepository.latestCity
+        if (cached != null && cachedCity?.name?.equals(cityName, ignoreCase = true) == true) {
+            renderForecast(cached)
+            return
+        }
+        fetchForecastData(cityName)
+    }
+
+    private fun fetchForecastData(cityName: String) {
+        setLoadingState(true)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = WeatherRepository.loadWeather(cityName)
+            setLoadingState(false)
+            result.onSuccess { pair ->
+                updateCityView(pair.first.name)
+                renderForecast(pair.second)
+            }.onFailure { error ->
+                Toast.makeText(requireContext(), "Ошибка: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun setLoadingState(isLoading: Boolean) {
+        progressBarForecast.visibility = if (isLoading) View.VISIBLE else View.GONE
+        btnDetailSearch.isEnabled = !isLoading
+    }
+
+    private fun renderForecast(forecast: ForecastResponse) {
+        populateHourlyForecast(forecast.hourly)
+        populateWeeklyForecast(forecast.daily)
+    }
+
+    private fun populateHourlyForecast(hourly: HourlyWeatherDto?) {
         layoutHourlyContainer.removeAllViews()
+        val times = hourly?.time ?: return
+        val temps = hourly.temperature ?: return
+        val codes = hourly.weatherCode ?: return
+        val count = minOf(24, times.size, temps.size, codes.size)
         val inflater = LayoutInflater.from(requireContext())
-        for (item in getHourlyData()) {
+        for (i in 0 until count) {
             val itemView = inflater.inflate(R.layout.item_hourly_weather, layoutHourlyContainer, false)
-            itemView.findViewById<TextView>(R.id.tvHourlyTime).text = item.first
-            itemView.findViewById<TextView>(R.id.tvHourlyIcon).text = item.second
-            itemView.findViewById<TextView>(R.id.tvHourlyTemp).text = item.third
+            itemView.findViewById<TextView>(R.id.tvHourlyTime).text = WeatherMapper.formatHour(times[i])
+            itemView.findViewById<TextView>(R.id.tvHourlyIcon).text = WeatherMapper.getWeatherEmoji(codes[i])
+            itemView.findViewById<TextView>(R.id.tvHourlyTemp).text = WeatherMapper.formatTemperature(temps[i])
             layoutHourlyContainer.addView(itemView)
         }
     }
 
-    private fun getHourlyData(): List<Triple<String, String, String>> {
-        return listOf(
-            Triple("10:00", "☀️", "+18°"),
-            Triple("12:00", "☀️", "+19°"),
-            Triple("14:00", "⛅", "+20°"),
-            Triple("16:00", "⛅", "+19°"),
-            Triple("18:00", "🌦️", "+17°"),
-            Triple("20:00", "🌧️", "+15°"),
-            Triple("22:00", "☁️", "+13°"),
-            Triple("00:00", "☁️", "+12°"),
-            Triple("03:00", "❄️", "+8°"),
-            Triple("06:00", "⛅", "+11°"),
-            Triple("08:00", "☀️", "+15°")
-        )
-    }
-
-    private fun populateWeeklyForecast() {
+    private fun populateWeeklyForecast(daily: DailyWeatherDto?) {
         layoutWeeklyContainer.removeAllViews()
+        val dates = daily?.time ?: return
+        val maxTemps = daily.maxTemp ?: return
+        val minTemps = daily.minTemp ?: return
+        val codes = daily.weatherCode ?: return
+        val count = minOf(dates.size, maxTemps.size, minTemps.size, codes.size)
         val inflater = LayoutInflater.from(requireContext())
-        for (day in getWeeklyData()) {
+        for (i in 0 until count) {
             val itemView = inflater.inflate(R.layout.item_weekly_weather, layoutWeeklyContainer, false)
-            itemView.findViewById<TextView>(R.id.tvWeeklyDate).text = day.first
-            itemView.findViewById<TextView>(R.id.tvWeeklyTemp).text = day.second
-            itemView.findViewById<TextView>(R.id.tvWeeklyPrecipitation).text = day.third
+            bindWeeklyItem(itemView, dates[i], maxTemps[i], minTemps[i], codes[i])
             layoutWeeklyContainer.addView(itemView)
         }
     }
 
-    private fun getWeeklyData(): List<Triple<String, String, String>> {
-        return listOf(
-            Triple("Сегодня, 30 октября", "+18° / +9°", "Осадки: Без осадков ☀️"),
-            Triple("Суббота, 31 октября", "+16° / +8°", "Осадки: Переменная облачность ⛅"),
-            Triple("Воскресенье, 1 ноября", "+14° / +7°", "Осадки: Небольшой дождь 🌧️"),
-            Triple("Понедельник, 2 ноября", "+12° / +5°", "Осадки: Кратковременный дождь 🌦️"),
-            Triple("Вторник, 3 ноября", "+13° / +4°", "Осадки: Пасмурно ☁️"),
-            Triple("Среда, 4 ноября", "+15° / +6°", "Осадки: Ясно ☀️"),
-            Triple("Четверг, 5 ноября", "+10° / +2°", "Осадки: Дождь со снегом ❄️")
-        )
+    private fun bindWeeklyItem(view: View, date: String, max: Double, min: Double, code: Int) {
+        view.findViewById<TextView>(R.id.tvWeeklyDate).text = WeatherMapper.formatDay(date)
+        view.findViewById<TextView>(R.id.tvWeeklyTemp).text =
+            "${WeatherMapper.formatTemperature(max)} / ${WeatherMapper.formatTemperature(min)}"
+        view.findViewById<TextView>(R.id.tvWeeklyPrecipitation).text =
+            "Осадки: ${WeatherMapper.getWeatherDescription(code)}"
     }
 }

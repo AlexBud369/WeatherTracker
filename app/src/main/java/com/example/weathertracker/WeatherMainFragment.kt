@@ -10,9 +10,16 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.card.MaterialCardView
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class WeatherMainFragment : Fragment() {
 
@@ -22,6 +29,7 @@ class WeatherMainFragment : Fragment() {
 
     private lateinit var etSearchCity: EditText
     private lateinit var btnSearch: Button
+    private lateinit var progressBarWeather: ProgressBar
     private lateinit var tvCityName: TextView
     private lateinit var tvCondition: TextView
     private lateinit var tvDateTime: TextView
@@ -34,7 +42,6 @@ class WeatherMainFragment : Fragment() {
     private lateinit var tvPressure: TextView
     private lateinit var btnShowDetails: Button
     private lateinit var btnAddReview: Button
-    private lateinit var btnNetworkPosts: Button
     private lateinit var tvLatestReviewNotice: TextView
 
     private val hideNoticeRunnable = Runnable {
@@ -63,12 +70,13 @@ class WeatherMainFragment : Fragment() {
         setupResultListener()
         setupSearchListeners()
         setupNavigationButtons()
-        updateWeatherDisplay(WeatherAppState.currentCity)
+        loadWeatherData(WeatherAppState.currentCity)
     }
 
     private fun bindViews(view: View) {
         etSearchCity = view.findViewById(R.id.etSearchCity)
         btnSearch = view.findViewById(R.id.btnSearch)
+        progressBarWeather = view.findViewById(R.id.progressBarWeather)
         tvCityName = view.findViewById(R.id.tvCityName)
         tvCondition = view.findViewById(R.id.tvCondition)
         tvDateTime = view.findViewById(R.id.tvDateTime)
@@ -81,7 +89,6 @@ class WeatherMainFragment : Fragment() {
         tvPressure = view.findViewById(R.id.tvPressure)
         btnShowDetails = view.findViewById(R.id.btnShowDetails)
         btnAddReview = view.findViewById(R.id.btnAddReview)
-        btnNetworkPosts = view.findViewById(R.id.btnNetworkPosts)
         tvLatestReviewNotice = view.findViewById(R.id.tvLatestReviewNotice)
     }
 
@@ -132,19 +139,10 @@ class WeatherMainFragment : Fragment() {
             val addReviewFragment = AddReviewFragment.newInstance(city = WeatherAppState.currentCity)
             (activity as? MainActivity)?.openFragment(addReviewFragment, addToBackStack = true)
         }
-        btnNetworkPosts.setOnClickListener {
-            val postListFragment = PostListFragment.newInstance()
-            (activity as? MainActivity)?.openFragment(postListFragment, addToBackStack = true)
-        }
         cardMapPreview.setOnClickListener {
             val mapFragment = MapFragment.newInstance(WeatherAppState.currentCity)
             (activity as? MainActivity)?.openFragment(mapFragment, addToBackStack = true)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updateWeatherDisplay(WeatherAppState.currentCity)
     }
 
     override fun onDestroyView() {
@@ -156,8 +154,8 @@ class WeatherMainFragment : Fragment() {
         val query = etSearchCity.text.toString().trim()
         if (query.isNotEmpty()) {
             WeatherAppState.currentCity = query
-            updateWeatherDisplay(WeatherAppState.currentCity)
             hideKeyboard()
+            loadWeatherData(query)
         }
     }
 
@@ -166,23 +164,52 @@ class WeatherMainFragment : Fragment() {
         imm?.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
-    private fun updateWeatherDisplay(city: String) {
-        tvCityName.text = city
-        tvMapCityTitle.text = "Интерактивная карта осадков: $city"
-        when (city.lowercase()) {
-            "санкт-петербург", "питер" -> setWeatherData("+11°C", "Ощущается как +8°C", "Дождь 🌧️", "6.5 м/с", "88%", "747 мм")
-            "сочи" -> setWeatherData("+22°C", "Ощущается как +23°C", "Солнечно ☀️", "2.1 м/с", "55%", "758 мм")
-            "новосибирск" -> setWeatherData("+4°C", "Ощущается как +1°C", "Облачно ☁️", "5.0 м/с", "72%", "750 мм")
-            else -> setWeatherData("+18°C", "Ощущается как +16°C", "Ясно ☀️", "4.2 м/с", "65%", "752 мм")
+    private fun loadWeatherData(cityName: String) {
+        setLoadingState(true)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = WeatherRepository.loadWeather(cityName)
+            setLoadingState(false)
+            result.onSuccess { pair ->
+                displayWeather(pair.first, pair.second)
+            }.onFailure { error ->
+                handleLoadError(error)
+            }
         }
     }
 
-    private fun setWeatherData(temp: String, feels: String, cond: String, wind: String, hum: String, press: String) {
-        tvCurrentTemp.text = temp
-        tvFeelsLike.text = feels
-        tvCondition.text = cond
-        tvWind.text = wind
-        tvHumidity.text = hum
-        tvPressure.text = press
+    private fun displayWeather(city: GeocodingCity, forecast: ForecastResponse) {
+        val current = forecast.current ?: return
+        WeatherAppState.currentLatitude = city.latitude
+        WeatherAppState.currentLongitude = city.longitude
+        WeatherAppState.currentCity = city.name
+        val countrySuffix = city.country?.let { ", $it" } ?: ""
+        tvCityName.text = "${city.name}$countrySuffix"
+        tvMapCityTitle.text = "Интерактивная карта осадков: ${city.name}"
+        setWeatherMetrics(current)
+        updateDateTime()
+    }
+
+    private fun setWeatherMetrics(current: CurrentWeatherDto) {
+        tvCurrentTemp.text = WeatherMapper.formatTemperature(current.temperature)
+        tvFeelsLike.text = WeatherMapper.formatFeelsLike(current.apparentTemperature)
+        tvCondition.text = WeatherMapper.getWeatherDescription(current.weatherCode)
+        tvWind.text = WeatherMapper.formatWindSpeed(current.windSpeed)
+        tvHumidity.text = WeatherMapper.formatHumidity(current.relativeHumidity)
+        tvPressure.text = WeatherMapper.formatPressure(current.surfacePressure)
+    }
+
+    private fun updateDateTime() {
+        val formatter = SimpleDateFormat("d MMMM, HH:mm", Locale.forLanguageTag("ru"))
+        tvDateTime.text = formatter.format(Date())
+    }
+
+    private fun handleLoadError(error: Throwable) {
+        val message = error.message ?: "Проверьте подключение к сети"
+        Toast.makeText(requireContext(), "Ошибка: $message", Toast.LENGTH_LONG).show()
+    }
+
+    private fun setLoadingState(isLoading: Boolean) {
+        progressBarWeather.visibility = if (isLoading) View.VISIBLE else View.GONE
+        btnSearch.isEnabled = !isLoading
     }
 }

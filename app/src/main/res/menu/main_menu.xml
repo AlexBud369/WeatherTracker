@@ -9,12 +9,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_posts"
-        android:icon="@drawable/ic_forecast"
-        android:title="Сводки из сети (Retrofit)"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings"
         android:title="Настройки"
