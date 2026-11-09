@@ -94,6 +94,7 @@ class MapFragment : Fragment() {
     }
 
     private fun buildMapHtml(lat: Double, lon: Double, zoom: Int, city: String, temp: String): String {
+        val script = buildMapScript(lat, lon, zoom, city, temp)
         return """
             <!DOCTYPE html>
             <html>
@@ -108,15 +109,27 @@ class MapFragment : Fragment() {
             </head>
             <body>
                 <div id="map"></div>
-                <script>
-                    var map = L.map('map', { zoomControl: false }).setView([$lat, $lon], $zoom);
-                    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                        maxZoom: 19
-                    }).addTo(map);
-                    L.marker([$lat, $lon]).addTo(map).bindPopup('<b>$city</b><br>$temp').openPopup();
-                </script>
+                $script
             </body>
             </html>
+        """.trimIndent()
+    }
+
+    private fun buildMapScript(lat: Double, lon: Double, zoom: Int, city: String, temp: String): String {
+        return """
+            <script>
+                var map = L.map('map', { zoomControl: false }).setView([$lat, $lon], $zoom);
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }).addTo(map);
+                L.marker([$lat, $lon]).addTo(map).bindPopup('<b>$city</b><br>$temp').openPopup();
+                fetch('https://api.rainviewer.com/public/weather-maps.json')
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) {
+                        var p = d.radar && d.radar.past;
+                        if (p && p.length > 0) {
+                            L.tileLayer('https://tilecache.rainviewer.com' + p[p.length - 1].path + '/256/{z}/{x}/{y}/2/1_1.png', { opacity: 0.65, maxZoom: 19 }).addTo(map);
+                        }
+                    }).catch(function() {});
+            </script>
         """.trimIndent()
     }
 
