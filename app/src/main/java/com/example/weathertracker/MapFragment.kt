@@ -84,7 +84,7 @@ class MapFragment : Fragment() {
         webViewMap.webViewClient = WebViewClient()
         val temp = getCurrentTempString()
         val html = buildMapHtml(latitude, longitude, zoomLevel, currentCity, temp)
-        webViewMap.loadDataWithBaseURL("https://basemaps.cartocdn.com", html, "text/html", "UTF-8", null)
+        webViewMap.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
     }
 
     private fun getCurrentTempString(): String {
@@ -110,8 +110,7 @@ class MapFragment : Fragment() {
                 <div id="map"></div>
                 <script>
                     var map = L.map('map', { zoomControl: false }).setView([$lat, $lon], $zoom);
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                        subdomains: 'abcd',
+                    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                         maxZoom: 19
                     }).addTo(map);
                     L.marker([$lat, $lon]).addTo(map).bindPopup('<b>$city</b><br>$temp').openPopup();
