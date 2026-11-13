@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -19,10 +20,10 @@ import kotlinx.coroutines.launch
 class ReviewsListFragment : Fragment() {
 
     companion object {
-        fun newInstance(): ReviewsListFragment {
-            return ReviewsListFragment()
-        }
+        fun newInstance(): ReviewsListFragment = ReviewsListFragment()
     }
+
+    private val reviewsViewModel: ReviewsViewModel by viewModels { ReviewsViewModelFactory() }
 
     private lateinit var rvReviews: RecyclerView
     private lateinit var tvEmptyReviews: TextView
@@ -56,7 +57,7 @@ class ReviewsListFragment : Fragment() {
         setupRecyclerView()
         setupResultListener()
         setupActionButtons()
-        observeReviewsFromDatabase()
+        observeViewModel()
     }
 
     private fun bindViews(view: View) {
@@ -91,10 +92,10 @@ class ReviewsListFragment : Fragment() {
         rvReviews.adapter = adapter
     }
 
-    private fun observeReviewsFromDatabase() {
+    private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                ReviewRepository.getReviewsFlow().collect { reviewsList ->
+                reviewsViewModel.reviews.collect { reviewsList ->
                     allReviews = reviewsList.toMutableList()
                     applyFilterAndSort()
                 }
@@ -114,15 +115,13 @@ class ReviewsListFragment : Fragment() {
     }
 
     private fun deleteReviewFromDatabase(review: Review) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            ReviewRepository.removeReview(review)
-            Toast.makeText(requireContext(), "Отзыв удален из базы данных Room", Toast.LENGTH_SHORT).show()
-        }
+        reviewsViewModel.deleteReview(review)
+        Toast.makeText(requireContext(), "Отзыв удален из базы данных Room", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupResultListener() {
         parentFragmentManager.setFragmentResultListener("review_added", viewLifecycleOwner) { _, _ ->
-            refreshReviewsList()
+            applyFilterAndSort()
         }
     }
 
@@ -167,18 +166,6 @@ class ReviewsListFragment : Fragment() {
         filterMode = "Все"
         sortMode = 0
         applyFilterAndSort()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        refreshReviewsList()
-    }
-
-    private fun refreshReviewsList() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            allReviews = ReviewRepository.getReviews().toMutableList()
-            applyFilterAndSort()
-        }
     }
 
     private fun applyFilterAndSort() {

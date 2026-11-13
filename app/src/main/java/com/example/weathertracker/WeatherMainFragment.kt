@@ -14,7 +14,10 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -26,6 +29,8 @@ class WeatherMainFragment : Fragment() {
     companion object {
         fun newInstance(): WeatherMainFragment = WeatherMainFragment()
     }
+
+    private val weatherViewModel: WeatherViewModel by viewModels { WeatherViewModelFactory() }
 
     private lateinit var etSearchCity: EditText
     private lateinit var btnSearch: Button
@@ -70,7 +75,10 @@ class WeatherMainFragment : Fragment() {
         setupResultListener()
         setupSearchListeners()
         setupNavigationButtons()
-        loadWeatherData(WeatherAppState.currentCity)
+        observeViewModel()
+        if (weatherViewModel.uiState.value.forecast == null) {
+            weatherViewModel.loadWeather(WeatherAppState.currentCity)
+        }
     }
 
     private fun bindViews(view: View) {
@@ -90,6 +98,28 @@ class WeatherMainFragment : Fragment() {
         btnShowDetails = view.findViewById(R.id.btnShowDetails)
         btnAddReview = view.findViewById(R.id.btnAddReview)
         tvLatestReviewNotice = view.findViewById(R.id.tvLatestReviewNotice)
+    }
+
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                weatherViewModel.uiState.collect { state ->
+                    renderUiState(state)
+                }
+            }
+        }
+    }
+
+    private fun renderUiState(state: WeatherUiState) {
+        setLoadingState(state.isLoading)
+        state.errorMessage?.let { message ->
+            Toast.makeText(requireContext(), "Ошибка: $message", Toast.LENGTH_LONG).show()
+        }
+        val city = state.city
+        val forecast = state.forecast
+        if (city != null && forecast != null) {
+            displayWeather(city, forecast)
+        }
     }
 
     private fun setupResultListener() {
@@ -116,9 +146,7 @@ class WeatherMainFragment : Fragment() {
     }
 
     private fun setupSearchListeners() {
-        btnSearch.setOnClickListener {
-            performSearch()
-        }
+        btnSearch.setOnClickListener { performSearch() }
         etSearchCity.setOnEditorActionListener { _, actionId, event ->
             val isEnterKey = event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE || isEnterKey) {
@@ -155,26 +183,13 @@ class WeatherMainFragment : Fragment() {
         if (query.isNotEmpty()) {
             WeatherAppState.currentCity = query
             hideKeyboard()
-            loadWeatherData(query)
+            weatherViewModel.loadWeather(query, force = true)
         }
     }
 
     private fun hideKeyboard() {
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(view?.windowToken, 0)
-    }
-
-    private fun loadWeatherData(cityName: String) {
-        setLoadingState(true)
-        viewLifecycleOwner.lifecycleScope.launch {
-            val result = WeatherRepository.loadWeather(cityName)
-            setLoadingState(false)
-            result.onSuccess { pair ->
-                displayWeather(pair.first, pair.second)
-            }.onFailure { error ->
-                handleLoadError(error)
-            }
-        }
     }
 
     private fun displayWeather(city: GeocodingCity, forecast: ForecastResponse) {
@@ -201,11 +216,6 @@ class WeatherMainFragment : Fragment() {
     private fun updateDateTime() {
         val formatter = SimpleDateFormat("d MMMM, HH:mm", Locale.forLanguageTag("ru"))
         tvDateTime.text = formatter.format(Date())
-    }
-
-    private fun handleLoadError(error: Throwable) {
-        val message = error.message ?: "Проверьте подключение к сети"
-        Toast.makeText(requireContext(), "Ошибка: $message", Toast.LENGTH_LONG).show()
     }
 
     private fun setLoadingState(isLoading: Boolean) {

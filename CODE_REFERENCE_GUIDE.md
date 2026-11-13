@@ -126,3 +126,18 @@
 | **Периодическая фоновая синхронизация** | `SettingsFragment.kt` | `updatePeriodicWork(enabled: Boolean)` | Планирование `PeriodicWorkRequestBuilder` с интервалом 2 часа и ограничением `NetworkType.CONNECTED` через `enqueueUniquePeriodicWork`. |
 | **Рантайм-запрос разрешения на уведомления** | `SettingsFragment.kt` | `permissionLauncher`, `checkNotificationPermission()` | Проверка и запрос разрешения через `ActivityResultContracts.RequestPermission()` на устройствах с Android 13+. |
 | **Интерфейс управления уведомлениями** | `fragment_settings.xml`, `SettingsFragment.kt` | `btnTestNotification`, `switchNotifications` | Кнопка «Тест уведомления (через 10 сек)» и тумблер включения/выключения периодической фоновой синхронизации. |
+
+---
+
+## 📌 Лабораторная работа №15: «Архитектура MVVM и ViewModel» (ветка `lab15`)
+
+| Требование / Тема работы | Файл | Класс / Функция / Разметка | Пояснение, что показать преподавателю |
+|---|---|---|---|
+| **Подключение ViewModel и Fragment-KTX** | `build.gradle.kts` | `lifecycle-viewmodel-ktx:2.8.7`, `fragment-ktx:1.8.5` | Библиотеки Android Jetpack для делегата `by viewModels()`, скоупа `viewModelScope` и управления жизненным циклом. |
+| **Класс состояния экрана (UI State)** | `WeatherUiState.kt` | `data class WeatherUiState(isLoading, city, forecast, errorMessage)` | Неизменяемая модель состояния экрана. Содержит все необходимые UI-данные: флаг загрузки, город, прогноз и ошибку. |
+| **ViewModel для погоды** | `WeatherViewModel.kt` | `class WeatherViewModel(repository) : ViewModel()` | Хранит состояние в `StateFlow<WeatherUiState>`, изолирует работу с сетью от UI, переживает поворот экрана устройства. |
+| **Асинхронная загрузка в viewModelScope** | `WeatherViewModel.kt` | `loadWeather(cityName, force)`, `viewModelScope.launch` | Выполнение запросов к `WeatherRepository` внутри `viewModelScope` с автоматической отменой при уничтожении ViewModel. |
+| **Фабрика создания ViewModel** | `WeatherViewModelFactory.kt` | `class WeatherViewModelFactory : ViewModelProvider.Factory` | Реализация `ViewModelProvider.Factory` для безопасного внедрения зависимостей репозитория в конструктор ViewModel. |
+| **ViewModel для списка отзывов** | `ReviewsViewModel.kt`, `ReviewsViewModelFactory.kt` | `class ReviewsViewModel`, `val reviews: StateFlow<List<Review>>` | Преобразование `Flow` из базы данных Room в `StateFlow` с помощью `stateIn()` и выполнение удаления через `viewModelScope`. |
+| **Подписка View на StateFlow** | `WeatherMainFragment.kt`, `ReviewsListFragment.kt` | `weatherViewModel.uiState.collect`, `repeatOnLifecycle` | Фрагменты становятся пассивными View: они подписываются на изменения состояния через `collect` в безопасном цикле `repeatOnLifecycle`. |
+| **Устойчивость к повороту экрана** | `WeatherMainFragment.kt`, `WeatherViewModel.kt` | `weatherViewModel.loadWeather(..., force = false)` | При повороте устройства `WeatherViewModel` сохраняется в памяти: повторный сетевой запрос НЕ отправляется, данные не мигают. |
